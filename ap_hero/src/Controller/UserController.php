@@ -26,17 +26,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
- * @IsGranted("ROLE_ADMIN")
+ * 
  *
  * @Route("/user")
  */
+
+// @IsGranted("ROLE_ADMIN")
 class UserController extends AbstractController
 {
     /**
      * index
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/", name="user_index", methods={"GET"})
      * @param  App\Repository\UserRepository $userRepository
      * @param  App\Repository\MetadataRepository $metadataRepository
@@ -53,6 +57,7 @@ class UserController extends AbstractController
 
     /**
      * new
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/new", name="user_new", methods={"GET","POST"})
      * @param  Symfony\Component\HttpFoundation\Request $request
      * @param  Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface $passwordEncoder
@@ -93,7 +98,21 @@ class UserController extends AbstractController
     }
 
     /**
+     * getCurrentUser
+     * @Route("/current", name="current_user", methods={"POST"})
+     * @param  Symfony\Component\HttpFoundation\Request $request
+     * @param  App\Repository\UserRepository $userRepository
+     *
+     * @return Symfony\Component\HttpFoundation\Response
+     */
+    public function getCurrentUser(Request $request, UserRepository $userRepository): Response
+    {
+        return new JsonResponse(["user" => $userRepository->findOneBy(['email' => $request->request->get('email')])]);
+    }
+
+    /**
      * show
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/{id}", name="user_show", methods={"GET"})
      * @param  App\Entity\User $user
      *
@@ -104,10 +123,12 @@ class UserController extends AbstractController
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
+        // return new JsonResponse($user);
     }
 
     /**
      * edit
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/{id}/edit", name="user_edit", methods={"GET","POST"})
      * @param  Symfony\Component\HttpFoundation\Request $request
      * @param  App\Entity\User $user
@@ -162,6 +183,7 @@ class UserController extends AbstractController
 
     /**
      * delete
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/{id}", name="user_delete", methods={"DELETE"})
      * @param  Symfony\Component\HttpFoundation\Request $request
      * @param  App\Entity\User $user

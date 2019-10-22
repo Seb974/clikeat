@@ -11,6 +11,7 @@ export default class Login extends React.Component
         user: [],
         email: "",
         password: "",
+        token: ""
     };
 
     onChange = (event) => {
@@ -21,23 +22,22 @@ export default class Login extends React.Component
 
     handleLogin = (event) => {
         event.preventDefault();
-        console.log("Email = " + this.state.email + " | Password = " + this.state.password);
-         axios.post('http://localhost:8000/login', {
-                 email: this.state.email, 
-                 password: this.state.password
-             })
-             .then(response => {
-                 console.log(response.data);
-        //         //if (response.data.token !== '') {
-        //             // const action = { type: 'TOGGLE_LOGSTATE', value: {logState: this.state.logState, order: 'login'} };
-        //             // this.props.dispatch(action);
-        //             // this.setState({logState: true});
-        //             //window.location = '/';
-        //         //}
-        //         // else {
-        //         //     alert('bad credentials');
-        //         // }
-        //         this.setState({email: '', password: ''});
+         axios.post('http://localhost:8000/api/login_check', {
+                username: this.state.email, 
+                password: this.state.password
+             }, { headers: { "Content-Type": "application/json" } })
+              .then(response => {
+                    console.log(response.data);
+                    this.setState({token: response.data.token});
+                    axios.post('http://localhost:8000/user/current', {
+                        email: this.state.email
+                    },
+                    { headers: { "Content-Type": "application/json"} })
+                     .then(response => {
+                        this.setState({user: response.data.user, email: '', password: ''});
+                        console.log(this.state.user);
+                     })
+                     window.location = '/';
              })
              .catch((err) => console.log(err));
         //     //this.setState({email: '', password: ''});
@@ -78,7 +78,7 @@ export default class Login extends React.Component
                                     </div>
 
 
-                                    <button type="submit" className="btn btn-primary btn-block m-t-10">SE CONNECTER
+                                    <button className="btn btn-primary btn-block m-t-10" >SE CONNECTER
                                         <i className="fa fa-sign-in"></i>
                                     </button>
 
@@ -86,7 +86,6 @@ export default class Login extends React.Component
                                         <span>Pas encore client ?</span>
                                     </div>
                                     <a className="btn btn-secondary btn-block" href="/register" role="button">CREER UN COMPTE</a>
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
                                 </form>
                             </div>
                         </div>
