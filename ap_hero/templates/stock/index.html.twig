@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stock index{% endblock %}
+
+{% block body %}
+    <h1>Stock index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Product</th>
+                <th>Variant</th>
+                <th>Quantity</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for stock in stocks %}
+            <tr>
+                <td>{{ stock.id }}</td>
+                <td>{{ stock.product.product.name }}</td>
+                <td>{{ stock.product.name }}</td>
+
+                <td>
+                    <form action="{{ path('stock_update', {'id': stock.id, 'quantity': 1}) }}" method="post">
+                        <input name="{{ stock.id }}" type="number" step="1" min="0" value="{{ stock.quantity }}"/>
+                        <input type="submit" value="Update"/>
+                    </form>
+                </td>
+
+
+                <td>
+                    <a href="{{ path('stock_show', {'id': stock.id}) }}">show</a>
+                    <a href="{{ path('stock_edit', {'id': stock.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('stock_new') }}">Create new</a>
+{% endblock %}

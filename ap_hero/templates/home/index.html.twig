@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ClikEat - l'apéro à domicile {% endblock %}
+
+{% block body %}
+    {#<style>
+        .product-wrapper
+        {
+            margin: 0.5em auto;
+            width: 100%;
+            font: 18px / 1.5 sans-serif;
+        }
+    </style> 
+    <div class="product-wrapper">
+        <section class="p-t-30" id="react-product-list"> #}
+            {# <div class="container">
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-12 col-sm-6 col-md-4 react-product"> #}
+                            {# <div class="card card-lg">
+                                <div class="card-img">
+                                    <a href="{{ path('product_show', { id: product.id }) }}">
+                                        {% if product.picture is not null %}
+                                            {# <img src="{{ asset('uploads/pictures/' ~ product.picture.b64) }}" class="card-img-top" alt="{{ product.picture.b64 }}"> #}
+                            {#                <img src="{{ product.picture.b64 }}" class="card-img-top" alt="{{ product.picture.b64 }}">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="card-block">
+                                    <ul>
+                                        <li>
+                                            <a href="{{ path('product_show', { id: product.id }) }}">
+                                                {{ product.name }}
+                                                <br/>
+                                                <i class="fas fa-truck"></i>
+                                                {{ product.supplier.preparationPeriod|date('i') }}mn @
+                                                {{ product.supplier.name }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    {% for variant in product.variants %}
+                                        <hr/>
+                                        <ul class="d-flex flex-row-reverse react-variants" data-name="{{ variant.name }}" data-stock="{{ variant.stock.quantity }}" data-price="{{ variant.price }}">
+                                            {# <li>
+                                                <form action="{{ path('cart_item_add', {'id': variant.id, 'quantity': 1.0}) }}" method="post">
+                                                    <i class="fas fa-dolly"></i>
+                                                    {{ variant.stock.quantity }}
+                                                    <span class="react-stock" data-name="{{ variant.name }}" data-stock="{{ variant.stock.quantity }}" data-price="{{ variant.price }}"></span>
+                                                    <button type="submit" class="btn btn-primary btn-sm" style="width:140px">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                        {{ variant.name }}
+                                                        à
+                                                        {{ variant.price }}€
+                                                    </button>
+                                                </form>
+                                            </li> #}
+                        {#                </ul>
+                                    {% endfor %}
+                                </div>
+                            </div> #}
+                        {# </div>
+                    {% endfor %}
+                </div>
+            </div> #}
+        {#</section>
+    </div> #}
+{% endblock %}

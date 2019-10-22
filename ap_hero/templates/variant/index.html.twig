@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Variant index{% endblock %}
+
+{% block body %}
+    <h1>Variant index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Product</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for variant in variants %}
+            <tr>
+                <td>{{ variant.product.category.name }}</td>
+                <td>{{ variant.product.name }}</td>
+                <td>{{ variant.name }}</td>
+                <td>{{ variant.price }}</td>
+
+
+                {% if variant.stock is not null %}
+                    {% if variant.stock.quantity > 0 %}
+                        <td>{{ variant.stock.quantity }} U </td>
+                        <td>
+                            <form action="{{ path('cart_item_add', {'id': variant.id, 'quantity': 1}) }}" method="post">
+                                <input name="{{ variant.id }}" type="number" step="1" min="1" max="{{ variant.stock.quantity }}" value="1"/>
+                                <input type="submit" value="Add to cart"/>
+                            </form>
+                        </td>
+                    {% else %}
+                        <td>En rupture de stock !</td>
+                    {% endif %}
+                {% else %}
+                    <td>En rupture de stock !</td>A
+                {% endif %}
+
+
+
+                <td>
+                    <a href="{{ path('variant_show', {'id': variant.id}) }}">show</a>
+                    <a href="{{ path('variant_edit', {'id': variant.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('variant_new') }}">Create new</a>
+{% endblock %}

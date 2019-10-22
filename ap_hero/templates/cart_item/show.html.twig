@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CartItem{% endblock %}
+
+{% block body %}
+    <h1>CartItem</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Username</th>
+            </tr>
+            <tr>
+                <td>{{ cart_item.id }}</td>
+                <td>{{ cart_item.product.name }}</td>
+                {# <td>{{ cart_item.quantity }}</td> #}
+                <td>
+                    <form action="{{ path('cart_item_editcart', {'id': cart_item.id}) }}" method="post">
+                        <input name="{{ cart_item.id }}" type="number" step="1" min="1" max="{{ cart_item.product.stock.quantity }}" value="{{ cart_item.quantity }}"/>     {# max="{{ cart_item.product.stock.quantity }}" #} 
+                        <input type="submit" value="Update"/>
+                    </form>
+                </td>
+                <td>{{ cart_item.user.username }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('get_cart_item') }}">back to list</a>
+
+
+    {{ include('cart_item/_delete_form.html.twig') }}
+{% endblock %}

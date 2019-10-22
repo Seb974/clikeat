@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="p-t-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="post">
+                        <div class="post-header">
+                            <div></div>
+                            <div>
+                                <h2 class="post-title">
+                                    {{ product.name }}
+                                </h2>
+                                <div class="post-meta">
+                                    <span>
+                                        <i class="fas fa-utensils"></i>
+                                        {{ product.Category.name }}
+                                    </span>
+                                    <p>
+                                        {% for allergen in product.allergens %}
+                                            Allergènes :
+                                            {{ allergen.name }}
+                                        {% else %}
+                                            {{ "Ne contient pas de produits allergènes." }}
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-thumbnail">
+                            {% if product.picture is not null %}
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <img class="embed-responsive-item" src="{{ product.picture.b64 }}">
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if product.variants is not null %}
+                            {% for variant in product.variants %}
+                                <hr/>
+                                <ul class="d-flex flex-row-reverse">
+                                    <li>
+                                        <form action="{{ path('cart_item_add', {'id': variant.id, 'quantity': 1.0}) }}" method="post">
+                                            <i class="fas fa-dolly"></i>
+                                            {{ variant.stock.quantity }}
+                                            <button type="submit" class="btn btn-primary btn-sm" style="width:140px">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                {{ variant.name }}
+                                                à
+                                                {{ variant.price }}€
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="sidebar">
+                        {% if product.nutritionals is not null %}
+                            <h4>valeurs nutriotionnelles moyennes pour 100g</h4>
+                            <div class="widget">
+                                <h5 class="widget-title">Energie (KJ) :
+                                    {{ product.nutritionals.kJ }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">Energie (KCal) :
+                                    {{ product.nutritionals.KCal }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">Proteines :
+                                    {{ product.nutritionals.protein }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">Carbohydrates :
+                                    {{ product.nutritionals.carbohydrates }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">Sucre :
+                                    {{ product.nutritionals.sugar }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">Matière grasse :
+                                    {{ product.nutritionals.fat }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">dont acides gras saturés :
+                                    {{ product.nutritionals.transAG }}</h5>
+                            </div>
+                            <div class="widget">
+                                <h5 class="widget-title">Sel :
+                                    {{ product.nutritionals.salt }}</h5>
+                            </div>
+                        {% endif %}
+						{% if is_granted('ROLE_ADMIN') %}
+                        <ul class="d-flex flex-row">
+                            <button class="btn btn-secondary btn-sm">
+                                <a href="{{ path('product_edit', {'id': product.id}) }}">edit</a>
+                            </button>
+                            {{ include('product/_delete_form.html.twig') }}
+                        </ul>
+						{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

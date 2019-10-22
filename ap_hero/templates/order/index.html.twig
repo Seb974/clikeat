@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders on preparation{% endblock %}
+
+{% block body %}
+    <h1>Orders on preparation</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Price HT</th>
+                <th>Tax</th>
+                <th>Price TTC</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.cartItem.product.product.name }}</td>
+                <td>{{ order.cartItem.product.name }}</td>
+                <td>{{ order.cartItem.quantity }}</td>
+                <td>{{ order.totalToPayHT }}</td>
+                <td>{{ order.totalTax }}</td>
+                <td>{{ order.totalToPayTTC }}</td>
+                <td>
+                    {# <a href="{{ path('order_show', {'id': order.id}) }}">show</a>
+                    <a href="{{ path('order_edit', {'id': order.id}) }}">edit</a> #}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# <a href="{{ path('cart_item_new') }}">Create new</a> #}
+{% endblock %}

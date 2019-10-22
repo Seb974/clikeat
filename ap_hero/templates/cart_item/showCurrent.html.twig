@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CartItem index{% endblock %}
+
+{% block body %}
+    
+    <h1>My cart</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Product</th>
+                <th>Unit price</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cart_item in currentCart %}
+            <tr>
+                <td>{{ cart_item.product.id }}</td>
+                <td>{{ cart_item.product.name }}</td>
+                <td>{{ cart_item.product.price }} €</td>
+                <td>{{ cart_item.quantity }}</td>
+                <td>{{ cart_item.product.price * cart_item.quantity }} €</td>
+                <td>
+                    <td>
+                        <form action="{{ path('cart_item_edit', {'id': cart_item.product.id }) }}" method="post">
+                            <input name="{{ cart_item.product.id }}" type="number" step="1" min="1" max="{{ cart_item.product.stock.quantity }}" value="{{ cart_item.quantity }}"/>
+                            <input type="submit" value="Update"/>
+                        </form>
+                        {{ include('cart_item/_delete_form.html.twig') }}
+                    </td>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div><strong>Tva (included): {{ totalTax }} €</strong></div>
+    <div><strong>Total to pay : {{ totalToPay }} €</strong></div>
+    <a href="{{ path('cart_validate') }}">Pay</a>
+    <br/><br/>
+    <a href="{{ path('product_index') }}">back to product list</a>
+{% endblock %}

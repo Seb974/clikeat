@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Metadata{% endblock %}
+
+{% block body %}
+    <h1>Create new Metadata</h1>
+
+    {{ include('metadata/_form.html.twig') }}
+
+    <a href="{{ path('metadata_index') }}">back to list</a>
+{% endblock %}

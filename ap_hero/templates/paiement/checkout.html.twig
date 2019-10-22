@@ -1,0 +1,266 @@
+{% extends 'base.html.twig' %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/leaflet/1/leaflet.css" />
+{% endblock %}
+
+{% block body %}
+    <style>
+        #map-example-container
+        { height: 300px };
+    </style>
+
+    <div class="container mt-3">
+        <div
+            class="row">
+            {# Right Panel Block #}
+            <div class="col-md-4 order-md-2 mb-4">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Ton panier</span>
+                    <span class="badge badge-secondary badge-pill">{{ count }}</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    {% for item in cart.cartItems %}
+                        {% if item.ispaid == false %}
+                            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                <div>
+                                    <h6 class="my-0">{{ item.quantity }}x
+                                        {{ item.product.product.name }}
+                                        {{ item.product.name }}</h6>
+                                    <small class="text-muted">{{ item.product.product.category.name }}</small>
+                                </div>
+                                <span class="text-muted">{{ item.product.price }}€</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (EUR)</span>
+                        <strong>{{ cart.totalToPay }}€</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>dont TVA incluse</span>
+                        <strong>{{ cart.totalTax }}€</strong>
+                    </li>
+                    <a href="{{ payment_url }}">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">PAYER</button>
+                    </a>
+                </ul>
+            </div>
+
+            {# Addresses panel #}
+            <div class="col-md-8 order-md-1">
+                <form class="needs-validation">
+                    <div
+                        class="row">
+
+                        {# User info #}
+                        <div class="col-md-4 mb-3">
+                            <label for="firstName">Nom</label>
+                            <input type="text" class="form-control" id="firstName" value="{{ user.username }}" required="" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;">
+                            <div class="invalid-feedback">
+                                Un prénom est nécessaire pour la livraison.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="email">Email
+                            </label>
+                            <input type="email" class="form-control" id="email" value="{{ user.email }}">
+                            <div class="invalid-feedback">
+                                Merci de renseigner un email afin d'être informé de étapes de votre commande.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="phone">Tel
+                            </label>
+                            <input type="text" class="form-control" id="phone" value="{{ metas.phone.field }}">
+                            <div class="invalid-feedback">
+                                Merci de renseigner un tel afin d'être informé de étapes de votre commande.
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Delivery address panel #}
+                    <hr class="mb-4">
+                    <h4 class="mb-3">Adresse de livraison</h4>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="map-example-container"></div>
+                        </div>
+
+                        <div class="col-md-5 mt-3">
+                         <label for="input-map">Rue</label>
+                            <input type="search" id="input-map" class="form-control" placeholder="Saisir nom d'une rue :"/>
+                        </div>
+
+                        <div class="col-md-5 mt-3">
+                         <label for="complément">Complement d'adresse</label>
+                            <input type="textarea" class="form-control" id="complément" value="" required="" placeholder="Appt, Immeuble, Digicode, etc" />
+                        </div>
+
+                        <div class="col-md-2 mt-3">
+                            <small>
+                            <label for="complément">GPS</label>
+                                <input type="input" class="form-control" id="gps" value="" required="" placeholder="" />
+                            </small>
+                        </div>
+                    </div>
+
+                    {# Billing address #}
+                    <hr class="mb-4">
+                    <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h4 class="mb-3">Adresse de facturation</h4>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="custom-control custom-checkbox custom-checkbox-primary">
+                            <input type="checkbox" class="custom-control-input" checked>
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">Identique à adresse de livraison</span>
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="address">Adresse</label>
+                            <input type="text" class="form-control" id="address" value="{{ metas.billing1.field }}" required="">
+                            <div class="invalid-feedback">
+                                Merci de saisir une adresse de livraison.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="zip">CP</label>
+                            <input type="text" class="form-control" id="zip" value="{{ metas.billing_city.zipCode }}" required="">
+                            <div class="invalid-feedback">
+                                Code Postal nécessaire.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="address2">Adresse 2
+                                <span class="text-muted">(Optionel)</span>
+                            </label>
+                            <input type="text" class="form-control" id="address2" value="{{ metas.billing2.field }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="billing_city">CP</label>
+                            <input type="text" class="form-control" id="billing_city" value="{{ metas.billing_city.name }}" required="">
+                            <div class="invalid-feedback">
+                                Code Postal nécessaire.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/leaflet/1/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/places.js@1.16.6"></script>
+    <script>
+        ( function () {
+            var placesAutocomplete = places( {
+                appId     : '{{ api.ALGOLIA_APPID  }}',
+                apiKey    : '{{ api.ALGOLIA_APIKEY }}',
+                container : document.querySelector( '#input-map' ),
+            } ).configure( {
+                countries         : ['fr'],
+                useDeviceLocation : false
+            } );
+
+            var map = L.map( 'map-example-container', {
+                scrollWheelZoom : true,
+                zoomControl     : true
+            } );
+
+            var osmLayer = new L.TileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                minZoom     : 8,
+                maxZoom     : 19,
+                attribution : 'Map © <a href="https://openstreetmap.org">OpenStreetMap</a>'
+            } );
+
+            var markers = [];
+
+            map.setView( new L.LatLng( -21.329519, 55.471617 ), 1 );
+            map.addLayer( osmLayer );
+
+            placesAutocomplete.on( 'suggestions'  , handleOnSuggestions   );
+            placesAutocomplete.on( 'cursorchanged', handleOnCursorchanged );
+            placesAutocomplete.on( 'change'       , handleOnChange        );
+            placesAutocomplete.on( 'clear'        , handleOnClear         );
+
+            function handleOnSuggestions( e ) {
+                markers.forEach( removeMarker );
+                markers = [];
+                if ( e.suggestions.length === 0 ) {
+                    map.setView( new L.LatLng( 0, 0 ), 1 );
+                    return;
+                }
+                e.suggestions.forEach( addMarker );
+                findBestZoom();
+            }
+
+            function handleOnChange( e ) {
+                markers.forEach( function ( marker, markerIndex ) {
+                    if ( markerIndex === e.suggestionIndex ) {
+                        markers = [marker];
+                        marker.setOpacity( 1 );
+                        findBestZoom();
+                    } else {
+                        removeMarker( marker );
+                    }
+                } );
+                document.querySelector('#gps').value = e.suggestion.latlng.lat + ',' + e.suggestion.latlng.lng;
+            }
+
+            function callback(response, status) {
+                console.log(response);
+            }
+
+            function handleOnClear() {
+                map.setView( new L.LatLng( 0, 0 ), 1 );
+                markers.forEach( removeMarker );
+            }
+
+            function handleOnCursorchanged( e ) {
+                markers.forEach( function ( marker, markerIndex ) {
+                    if ( markerIndex === e.suggestionIndex ) {
+                        marker.setOpacity( 1 );
+                        marker.setZIndexOffset( 1000 );
+                    } else {
+                        marker.setZIndexOffset( 0 );
+                        marker.setOpacity( 0.5 );
+                    }
+                } );
+            }
+
+            function addMarker( suggestion ) {
+                var marker = L.marker( suggestion.latlng, {
+                    opacity: .4
+                } );
+                marker.addTo( map );
+                markers.push( marker );
+            }
+
+            function removeMarker( marker ) {
+                map.removeLayer( marker );
+            }
+
+            function getDistance() {
+            }
+
+            function findBestZoom() {
+                var featureGroup = L.featureGroup( markers );
+                map.fitBounds( featureGroup.getBounds().pad( 0.5 ), {
+                    animate: false
+                } );
+            }
+        } )();
+    </script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product index{% endblock %}
+
+{% block body %}
+    <h1>Product index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Name</th>
+                <th>Description</th>
+                {# <th>Prix unitaire</th>
+                <th>Stock</th> #}
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                {% if product.category is not null %}
+                    <td>{{ product.category.name }}</td>
+                {% endif %}
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                {# <td>{{ product.price }}</td> #}
+                {# <!--{% if product.stock is not null %}
+                    {% if product.stock.quantity > 0 %}
+                        <td>{{ product.stock.quantity }} U </td>
+                        <td>
+                            <form action="{{ path('cart_item_add', {'id': product.id, 'quantity': 1}) }}" method="post">
+                                <input name="{{ product.id }}" type="number" step="1" min="1" max="{{ product.stock.quantity }}" value="1"/>
+                                <input type="submit" value="Add to cart"/>
+                            </form>
+                        </td>
+                    {% else %}
+                        <td>En rupture de stock !</td>
+                    {% endif %}
+                {% else %}
+                    <td>En rupture de stock !</td>
+                {% endif %} -->#}
+                {% if is_granted("ROLE_ADMIN") %}
+                <td>
+                    <a href="{{ path('product_show', {'id': product.id}) }}">show</a>
+                    <a href="{{ path('product_edit', {'id': product.id}) }}">edit</a>
+                </td>
+                {% endif %}
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('product_new') }}">Create new</a>
+{% endblock %}

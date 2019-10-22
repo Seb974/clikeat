@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <h1>Orders</h1>
+
+    <div class="container">
+      <div class="row"> 
+        <div class="col-12 col-sm-6 col-md-4">
+
+          {% for order in del_order %}
+            <div class="card card-lg">
+              <ul>
+
+                <div class="d-flex p-2 flex-grow-1 bd-highlight" id= "pad_my_order">
+                  <li class="">{{ order.user.username }}</li>
+                  <li>
+                    {% for metadata in order.user.metadata %}
+                      {% if ("billing" in metadata.type) %}
+                        {{ metadata.field}}<br/>
+                      {% endif %}
+                    {% endfor %}
+                  </li>
+                  <li>
+                    <button type="submit" class="btn btn-primary btn-sm" style="width:140px">{{ order.orderStatus }}</button>
+                  </li>
+                </div>
+
+              <ul>
+            </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{# {% block javascripts %}
+	{{ parent() }}
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+	<script>
+		$('#exampleModal').on('shown.bs.modal', function () {
+			var modal = $(this);
+			$.ajax('{{ path('article_create') }}', {
+				success: function(data) {
+					modal.find('.modal-body').html(data);
+				}
+			});
+		});
+ 
+        $(document).on('submit', 'form', function(e){
+			// il est impératif de commencer avec cette méthode qui va empêcher le navigateur d'envoyer le formulaire lui-même
+            e.preventDefault();
+            
+            $form = $(e.target);
+            modal = $('#exampleModal');
+ 
+			var title = $('#article_title').val();
+            
+        	var $submitButton = $form.find(':submit');
+    		$submitButton.html('<i class="fas fa-spinner fa-pulse"></i>');
+    		$submitButton.prop('disabled', true);
+ 
+			// ajaxSubmit du plugin ajaxForm nécessaire pour l'upload de fichier
+			$form.ajaxSubmit({
+				type: 'post',
+				success: function(data) {
+					if (data == 'ok') {
+						$('ul').append('<li>' + title + '</li>');
+						modal.modal('toggle');
+					} else {
+						modal.find('.modal-body').html(data);
+					}
+				},
+				error: function(jqXHR, status, error) {
+					  $submitButton.html(button.data('label'));
+					  $submitButton.prop('disabled', false);
+				}
+			});
+        });
+	</script>
+{% endblock %} #}

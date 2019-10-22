@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Informations nécessaires{% endblock %}
+
+{% block body %}
+    <h1>Informations</h1>
+    <p>Pour procéder au paiement, nous avons besoin de certaines informations vous concernant.
+    Si vous possédez un compte chez ClikEat, nous vous invitons à vous connecter.
+    Si ce n'est pas (encore) le cas, nous serions ravis de vous compter parmis nos fidèles utilisateurs et vous invitons à vous inscrire</p>
+    <br/>
+        <a href="{{ path('login') }}">S'AUTHENTIFIER</a>
+    <br/>
+    <br/>
+    <p>Vous pouvez également utiliser nos services sans créer de compte, en renseignant simplement les informations ci-dessous.</p>
+    <p>Respectueux de votre désir de ne pas faire partie de notre belle clientèle fidèle, ces informations ne seront pas sauvegardées  et seront
+    effacées immédiatement après la fin de la transaction.</p>
+
+
+    {{ include('user/_form.html.twig') }}
+
+    <a href="{{ path('user_index') }}">back to list</a>
+{% endblock %}
