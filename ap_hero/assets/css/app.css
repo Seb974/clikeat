@@ -1,0 +1,10 @@
+/* body {
+    background-color: lightgray;
+} */
+
+.product-wrapper
+        {
+            margin: 0.5em auto;
+            width: 100%;
+            font: 18px / 1.5 sans-serif;
+        }

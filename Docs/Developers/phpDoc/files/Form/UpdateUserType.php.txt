@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Form\CreateUserType;
+
+use Doctrine\ORM\EntityManagerInterface;
+
+class UpdateUserType extends AbstractType
+{   
+    public function getParent()
+    {
+        return CreateUserType::class;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {   
+        $builder->remove('password');
+        $builder
+            ->add('roles', ChoiceType::class, [
+                'choices'  => [
+                    'user' => "ROLE_USER",
+                    'supplier' => "ROLE_SUPPLIER",
+                    'deliverer' => "ROLE_DELIVERER",
+                    'admin' => "ROLE_ADMIN",
+                ],
+                'mapped' => false,
+            ])
+            ->add('isBanned', CheckboxType::class, [
+                        'label'    => 'Ban',
+                        'required' => false,
+                        'mapped'   => true,
+            ]);
+    }
+}

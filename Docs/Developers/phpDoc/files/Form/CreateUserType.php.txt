@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Length;
+use App\Form\EditSelfType;
+
+class CreateUserType extends AbstractType
+{
+    public function getParent()
+    {
+        return EditSelfType::class;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+                ->add('password', RepeatedType::class, [
+                      'type' => PasswordType::class,
+                      'invalid_message' => 'The entered password are different.',
+                      'options'         => [ 'attr' => [ 'class' => 'password-field']],
+                      'mapped'          => false,
+                      'required'        => true,
+                      'first_options'   => [ 'label' => 'plainPassword' ],
+                      'second_options'  => [ 'label' => 'confirmPasword'],
+                      'constraints'     => [ 
+                        new NotBlank( ['message' => 'Please enter a password'] ),
+                        new Length([
+                            'min'        => 6,
+                            'max'        => 20,
+                            'minMessage' => 'Your password should be at least {{ limit }} characters',
+                            'maxMessage' => 'Your password should be at most {{ limit }} characters',
+                        ])
+                    ]
+                ])
+                ->add('roles', ChoiceType::class, [
+                    'choices'  => [
+                        'user' => "ROLE_USER",
+                        'supplier' => "ROLE_SUPPLIER",
+                        'deliverer' => "ROLE_DELIVERER",
+                        'admin' => "ROLE_ADMIN",
+                    ],
+                    'mapped' => false,
+                ]);
+    }
+}
+
