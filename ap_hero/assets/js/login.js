@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Product from './product';
+import { connect } from 'react-redux';
 
 export default class Login extends React.Component 
 {
@@ -25,19 +26,23 @@ export default class Login extends React.Component
          axios.post('http://localhost:8000/api/login_check', {
                 username: this.state.email, 
                 password: this.state.password
-             }, { headers: { "Content-Type": "application/json" } })
+             }, 
+             { 
+                headers: { "Content-Type": "application/json" } 
+             })
               .then(response => {
-                    console.log(response.data);
                     this.setState({token: response.data.token});
                     axios.post('http://localhost:8000/user/current', {
                         email: this.state.email
-                    },
-                    { headers: { "Content-Type": "application/json"} })
+                    }, 
+                    { 
+                        headers: { "Content-Type": "application/json" } 
+                    })
                      .then(response => {
                         this.setState({user: response.data.user, email: '', password: ''});
                         console.log(this.state.user);
-                     })
-                     window.location = '/';
+                     });
+                    //window.location = '/';
              })
              .catch((err) => console.log(err));
         //     //this.setState({email: '', password: ''});
