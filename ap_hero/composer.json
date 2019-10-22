@@ -10,6 +10,7 @@
         "jzonta/faker-restaurant": "^1.1",
         "knpuniversity/oauth2-client-bundle": "^1.29",
         "league/oauth2-facebook": "^2.0",
+        "lexik/jwt-authentication-bundle": "^2.6",
         "payplug/payplug-php": "^3.1",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "4.3.*",
