@@ -10,11 +10,12 @@ import {
     REGISTER_FAIL
   } from '../actions/types';
   
+  const storedToken = localStorage.getItem('token') || "";
   const initialState = {
-    token: localStorage.getItem('token'),
-    isAuthenticated: null,
+    token: storedToken || "",
+    isAuthenticated: storedToken !== "" ? true : false,
     isLoading: false,
-    user: null
+    user: storedToken !== "" ? userExtractor(storedToken) : null
   };
   
   export default function(state = initialState, action) {
@@ -33,9 +34,8 @@ import {
         };
       case LOGIN_SUCCESS:
       case REGISTER_SUCCESS:
-        console.log("passage dans authReducer : user = " + userExtractor(action.payload.token));
-        console.log(userExtractor(action.payload.token));
         localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('user', userExtractor(action.payload.token));
         return {
           ...state,
           ...action.payload,
@@ -48,6 +48,7 @@ import {
       case LOGOUT_SUCCESS:
       case REGISTER_FAIL:
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         return {
           ...state,
           token: null,

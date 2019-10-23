@@ -41,4 +41,4 @@ export default class Products extends React.Component
     }
 }
 
-//ReactDOM.render(<Products/>, document.getElementById("react-product-list"));
+// ReactDOM.render(<Products/>, document.getElementById("react-product-list"));

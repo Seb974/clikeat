@@ -1,27 +1,13 @@
-console.log("From login...");
-
 import React from 'react';
 import {Alert} from 'reactstrap';
-import axios from 'axios';
-
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../actions/authActions';
 import { clearErrors } from '../actions/errorActions';
+import Products from './products';
 
 class Login extends React.Component 
 {
-    // state = {
-    //     user: this.props.user || [],
-    //     email: "",
-    //     password: "",
-    //     token: this.props.token || "", 
-    //     msg: null
-    // };
-
-
-    // debut 
     state = {
         email: '',
         password: '',
@@ -30,28 +16,29 @@ class Login extends React.Component
     
     static propTypes = {
         isAuthenticated: PropTypes.bool,
+        user: PropTypes.object,
         error: PropTypes.object.isRequired,
         login: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired
     };
 
     componentDidUpdate = (prevProps) => {
-    //     const { error, isAuthenticated } = this.props;
+         const { error, isAuthenticated } = this.props;
     //     console.log("error : " + error + " | previous error : " + prevProps.error);
-    //     if (error !== prevProps.error) {
-    //       // Check for register error
+    //      if (error !== prevProps.error) {
+    // //       // Check for register error
     //       if (error.id === 'LOGIN_FAIL') {
     //         this.setState({ msg: error.msg.msg });
     //       } else {
     //         this.setState({ msg: null });
     //       }
-    //     }
+    //      }
     
     //     // If authenticated, close modal
-        //  if (isAuthenticated) {
-        //      this.props.clearErrors();
-        //      window.location = '/';
-        //  }
+        //   if (isAuthenticated) {
+        //     //   this.props.clearErrors();
+        //       window.location = '/';
+        //   }
     }
 
     onChange = e => {
@@ -60,15 +47,10 @@ class Login extends React.Component
     
     handleLogin = e => {
         e.preventDefault();
-    
         const { email, password } = this.state;
         const user = { email, password};
-    
-        // Attempt to login
         this.props.login(user);
       };
-
-    // fin
 
     onChange = (event) => {
         this.setState({
@@ -76,84 +58,64 @@ class Login extends React.Component
         })
     }
 
-    // handleLogin = (event) => {
-    //     event.preventDefault();
-    //      axios.post('http://localhost:8000/api/login_check', {
-    //             username: this.state.email, 
-    //             password: this.state.password
-    //          }, 
-    //          { 
-    //             headers: { "Content-Type": "application/json" } 
-    //          })
-    //           .then(response => {
-    //                 this.setState({token: response.data.token});
-    //                 this.setState({user: this.getUserFromToken(response.data.token)});
-    //                 // window.location = '/';
-    //          })
-    //          .catch((err) => console.log(err));
-    //     //     //this.setState({email: '', password: ''});
-    // }
-
-    // getUserFromToken = (token) => {
-    //     const base64Url = this.state.token.split('.')[1];
-    //     const base64 = base64Url.replace('-', '+').replace('_', '/');
-    //     const data = JSON.parse(window.atob(base64));
-    //     return data.data;
-    // }
-
     render() {
-        return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-12 col-sm-8 col-md-4 mx-auto">
-                        <div className="card m-b-0">
-                            <div className="card-header">
-                                <h4 className="card-title">
-                                    <i className="fa fa-sign-in"></i>Se connecter
-                                </h4>
-                            </div>
-                            <div className="card-block">
-                                {this.state.msg ? (
-                                    <Alert color='danger'>{this.state.msg}</Alert>
-                                ) : null}
-                                <form onSubmit={this.handleLogin}>
-                                    {(!this.props.isAuthenticated) ? "" : 
-                                        <div className="mb-3">
-                                            You are logged in as 
-                                            { " " + this.props.user.email },
-                                            <a href="{{ path('logout') }}"> Logout</a>
+        if (!this.props.isAuthenticated) {
+            return (
+                <div className="container">
+                    <div className="row">
+                        <div className="col-12 col-sm-8 col-md-4 mx-auto">
+                            <div className="card m-b-0">
+                                <div className="card-header">
+                                    <h4 className="card-title">
+                                        <i className="fa fa-sign-in"></i>Se connecter
+                                    </h4>
+                                </div>
+                                <div className="card-block">
+                                    {this.state.msg ? (
+                                        <Alert color='danger'>{this.state.msg}</Alert>
+                                    ) : null}
+                                    <form onSubmit={this.handleLogin}>
+                                        {(!this.props.isAuthenticated) ? "" : 
+                                            <div className="mb-3">
+                                                You are logged in as 
+                                                { " " + this.props.user.email },
+                                                <a href="{{ path('logout') }}"> Logout</a>
+                                            </div>
+                                        }
+    
+                                        <div className="form-group input-icon-left m-b-10">
+                                            <i className="fa fa-user"></i>
+                                            <label className="sr-only">Email</label>
+                                            <input type="email" name="email" id="inputEmail" className="form-control" placeholder="Email" required autoFocus value={this.state.email} onChange={this.onChange}/>
                                         </div>
-                                    }
-
-                                    <div className="form-group input-icon-left m-b-10">
-                                        <i className="fa fa-user"></i>
-                                        <label className="sr-only">Email</label>
-                                        <input type="email" name="email" id="inputEmail" className="form-control" placeholder="Email" required autoFocus value={this.state.email} onChange={this.onChange}/>
-                                    </div>
-
-                                    <div className="form-group input-icon-left m-b-15">
-                                        <i className="fa fa-lock"></i>
-                                        <label className="sr-only">Password</label>
-                                        <input type="password" name="password" id="inputPassword" className="form-control" placeholder="Mot de passe" required value={this.state.password} onChange={this.onChange}/>
-                                    </div>
-
-
-                                    <button className="btn btn-primary btn-block m-t-10" >SE CONNECTER
-                                        <i className="fa fa-sign-in"></i>
-                                    </button>
-
-                                    <div className="divider">
-                                        <span>Pas encore client ?</span>
-                                    </div>
-                                    <a className="btn btn-secondary btn-block" href="/register" role="button">CREER UN COMPTE</a>
-                                </form>
+    
+                                        <div className="form-group input-icon-left m-b-15">
+                                            <i className="fa fa-lock"></i>
+                                            <label className="sr-only">Password</label>
+                                            <input type="password" name="password" id="inputPassword" className="form-control" placeholder="Mot de passe" required value={this.state.password} onChange={this.onChange}/>
+                                        </div>
+    
+    
+                                        <button className="btn btn-primary btn-block m-t-10" >SE CONNECTER
+                                            <i className="fa fa-sign-in"></i>
+                                        </button>
+    
+                                        <div className="divider">
+                                            <span>Pas encore client ?</span>
+                                        </div>
+                                        <a className="btn btn-secondary btn-block" href="/register" role="button">CREER UN COMPTE</a>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
-    }
+                );
+            } 
+            else {
+                return <Products/>;
+            }
+        } 
 }
 
 const mapStateToProps = state => ({

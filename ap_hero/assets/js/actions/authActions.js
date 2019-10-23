@@ -18,13 +18,14 @@ export const loadUser = () => (dispatch, getState) => {
   dispatch({ type: USER_LOADING });
 
   axios
-    .get('/api/auth/user', tokenConfig(getState))
-    .then(res =>
+    .get('http://localhost:8000/user/current', tokenConfig(getState))
+    .then((res) => {
       dispatch({
         type: USER_LOADED,
         payload: res.data
       })
-    )
+      console.log(res.data);
+    })
     .catch(err => {
       dispatch(returnErrors(err.response.data, err.response.status));
       dispatch({
@@ -110,7 +111,8 @@ export const tokenConfig = getState => {
 
   // If token, add to headers
   if (token) {
-    config.headers['x-auth-token'] = token;
+    // config.headers['x-auth-token'] = token;
+    config.headers['Authorization'] = 'Bearer ' + token;
   }
 
   return config;

@@ -100,7 +100,7 @@ class UserController extends AbstractController
 
     /**
      * getCurrentUser
-     * @Route("/current", name="current_user", methods={"POST"})
+     * @Route("/current", name="current_user", methods={"GET"})
      * @param  Symfony\Component\HttpFoundation\Request $request
      * @param  App\Repository\UserRepository $userRepository
      *
@@ -108,13 +108,16 @@ class UserController extends AbstractController
      */
     public function getCurrentUser(Request $request, UserRepository $userRepository, SerializerService $serializer)
     {
-        $email = "";
-        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-            $data = json_decode($request->getContent(), true);
-            $request->request->replace(is_array($data) ? $data : array());
-            $email = $data['email'];
-        }
-        $user = $userRepository->findOneBy(['email' => $email]);
+        // $email = "";
+        // if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        //     $data = json_decode($request->getContent(), true);
+        //     $request->request->replace(is_array($data) ? $data : array());
+        //     $email = $data['email'];
+        // }
+        // $user = $userRepository->findOneBy(['email' => $email]);
+        // return JsonResponse::fromJsonString($serializer->serializeEntity($user, 'user'));
+        $clientUser = $request->query->get('user');
+        $user = $userRepository->find($clientUser['id']);
         return JsonResponse::fromJsonString($serializer->serializeEntity($user, 'user'));
     }
 
