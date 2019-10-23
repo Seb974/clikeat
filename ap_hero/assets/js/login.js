@@ -32,17 +32,20 @@ export default class Login extends React.Component
              })
               .then(response => {
                     this.setState({token: response.data.token});
-                    axios.post('http://localhost:8000/user/current', {
-                        email: this.state.email
-                    }, 
-                    { 
-                        headers: { "Content-Type": "application/json" } 
-                    })
-                     .then(response => {
-                        this.setState({user: response.data.user, email: '', password: ''});
-                        console.log(this.state.user);
-                     });
-                    //window.location = '/';
+                    const base64Url = this.state.token.split('.')[1];
+                    const base64 = base64Url.replace('-', '+').replace('_', '/');
+                    console.log(JSON.parse(window.atob(base64)));
+                    // axios.post('http://localhost:8000/user/current', {
+                    //     email: this.state.email
+                    // }, 
+                    // { 
+                    //     headers: { "Content-Type": "application/json" } 
+                    // })
+                    //  .then(response => {
+                    //     this.setState({user: response.data, email: '', password: ''});
+                    //     console.log(this.state.user);
+                    //  });
+                    // window.location = '/';
              })
              .catch((err) => console.log(err));
         //     //this.setState({email: '', password: ''});

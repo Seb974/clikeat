@@ -20,6 +20,7 @@ use App\Form\UpdateUserType;
 use App\Repository\UserRepository;
 use App\Repository\MetadataRepository;
 use App\Service\Metadata\MetadataService;
+use App\Service\Serializer\SerializerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,7 @@ class UserController extends AbstractController
 {
     /**
      * index
-     * 
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/", name="user_index", methods={"GET"})
      * @param  App\Repository\UserRepository $userRepository
      * @param  App\Repository\MetadataRepository $metadataRepository
@@ -57,7 +58,7 @@ class UserController extends AbstractController
 
     /**
      * new
-     * 
+     * @IsGranted("ROLE_ADMIN")
      * @Route("/new", name="user_new", methods={"GET","POST"})
      * @param  Symfony\Component\HttpFoundation\Request $request
      * @param  Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface $passwordEncoder
@@ -105,7 +106,7 @@ class UserController extends AbstractController
      *
      * @return Symfony\Component\HttpFoundation\Response
      */
-    public function getCurrentUser(Request $request, UserRepository $userRepository)
+    public function getCurrentUser(Request $request, UserRepository $userRepository, SerializerService $serializer)
     {
         $email = "";
         if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
@@ -114,7 +115,7 @@ class UserController extends AbstractController
             $email = $data['email'];
         }
         $user = $userRepository->findOneBy(['email' => $email]);
-        return new JsonResponse(["user" => $user]);
+        return JsonResponse::fromJsonString($serializer->serializeEntity($user, 'user'));
     }
 
     /**
