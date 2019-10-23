@@ -1,19 +1,74 @@
 console.log("From login...");
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {Alert} from 'reactstrap';
 import axios from 'axios';
-import Product from './product';
-import { connect } from 'react-redux';
 
-export default class Login extends React.Component 
+
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from '../actions/authActions';
+import { clearErrors } from '../actions/errorActions';
+
+class Login extends React.Component 
 {
+    // state = {
+    //     user: this.props.user || [],
+    //     email: "",
+    //     password: "",
+    //     token: this.props.token || "", 
+    //     msg: null
+    // };
+
+
+    // debut 
     state = {
-        user: this.props.user || [],
-        email: "",
-        password: "",
-        token: this.props.token || ""
+        email: '',
+        password: '',
+        msg: null
+      };
+    
+    static propTypes = {
+        isAuthenticated: PropTypes.bool,
+        error: PropTypes.object.isRequired,
+        login: PropTypes.func.isRequired,
+        clearErrors: PropTypes.func.isRequired
     };
+
+    componentDidUpdate = (prevProps) => {
+    //     const { error, isAuthenticated } = this.props;
+    //     console.log("error : " + error + " | previous error : " + prevProps.error);
+    //     if (error !== prevProps.error) {
+    //       // Check for register error
+    //       if (error.id === 'LOGIN_FAIL') {
+    //         this.setState({ msg: error.msg.msg });
+    //       } else {
+    //         this.setState({ msg: null });
+    //       }
+    //     }
+    
+    //     // If authenticated, close modal
+        //  if (isAuthenticated) {
+        //      this.props.clearErrors();
+        //      window.location = '/';
+        //  }
+    }
+
+    onChange = e => {
+        this.setState({ [e.target.name]: e.target.value });
+      };
+    
+    handleLogin = e => {
+        e.preventDefault();
+    
+        const { email, password } = this.state;
+        const user = { email, password};
+    
+        // Attempt to login
+        this.props.login(user);
+      };
+
+    // fin
 
     onChange = (event) => {
         this.setState({
@@ -21,33 +76,32 @@ export default class Login extends React.Component
         })
     }
 
-    handleLogin = (event) => {
-        event.preventDefault();
-         axios.post('http://localhost:8000/api/login_check', {
-                username: this.state.email, 
-                password: this.state.password
-             }, 
-             { 
-                headers: { "Content-Type": "application/json" } 
-             })
-              .then(response => {
-                    this.setState({token: response.data.token});
-                    this.setState({user: this.getUserFromToken(response.data.token)});
-                    // window.location = '/';
-             })
-             .catch((err) => console.log(err));
-        //     //this.setState({email: '', password: ''});
-    }
+    // handleLogin = (event) => {
+    //     event.preventDefault();
+    //      axios.post('http://localhost:8000/api/login_check', {
+    //             username: this.state.email, 
+    //             password: this.state.password
+    //          }, 
+    //          { 
+    //             headers: { "Content-Type": "application/json" } 
+    //          })
+    //           .then(response => {
+    //                 this.setState({token: response.data.token});
+    //                 this.setState({user: this.getUserFromToken(response.data.token)});
+    //                 // window.location = '/';
+    //          })
+    //          .catch((err) => console.log(err));
+    //     //     //this.setState({email: '', password: ''});
+    // }
 
-    getUserFromToken = (token) => {
-        const base64Url = this.state.token.split('.')[1];
-        const base64 = base64Url.replace('-', '+').replace('_', '/');
-        const data = JSON.parse(window.atob(base64));
-        return data.data;
-    }
+    // getUserFromToken = (token) => {
+    //     const base64Url = this.state.token.split('.')[1];
+    //     const base64 = base64Url.replace('-', '+').replace('_', '/');
+    //     const data = JSON.parse(window.atob(base64));
+    //     return data.data;
+    // }
 
     render() {
-        const user = this.state.user;
         return (
             <div className="container">
                 <div className="row">
@@ -59,11 +113,14 @@ export default class Login extends React.Component
                                 </h4>
                             </div>
                             <div className="card-block">
-                                <form method="post" onSubmit={this.handleLogin}>
-                                    {(user === [] || typeof(user.email) === 'undefined') ? "" : 
+                                {this.state.msg ? (
+                                    <Alert color='danger'>{this.state.msg}</Alert>
+                                ) : null}
+                                <form onSubmit={this.handleLogin}>
+                                    {(!this.props.isAuthenticated) ? "" : 
                                         <div className="mb-3">
                                             You are logged in as 
-                                            { " " + user.email },
+                                            { " " + this.props.user.email },
                                             <a href="{{ path('logout') }}"> Logout</a>
                                         </div>
                                     }
@@ -97,8 +154,17 @@ export default class Login extends React.Component
             </div>
         );
     }
-
 }
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
+    error: state.error
+  });
+  
+  export default connect( mapStateToProps, { login, clearErrors })(Login);
+
+
 
 // style="margin-top:50px"
 

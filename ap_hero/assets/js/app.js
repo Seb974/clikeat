@@ -15,12 +15,13 @@ import ReactDOM from 'react-dom';
 // import {Router, Route, Switch, Redirect} from "react-router-dom";
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import { Provider } from 'react-redux';
-import Store from '../store/configureStore';
 import Navbar from './components/navBar';
 import Products from './components/products';
 import Login from './components/login';
+import store from './store';
+import { loadUser } from './actions/authActions';
 
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
 // any CSS you require will output into a single css file (app.css in this case)
 require('../css/app.css');
@@ -35,11 +36,12 @@ export default class App extends React.Component
 
     render() {
         return (
-            <Provider store={Store}>
+            <Provider store={store}>
                 <Router>
                 <span>
                     <span id="react-header">
-                        <Navbar details={this.state.user}/>
+                        {/* <Navbar details={this.state.user}/> */}
+                        <Navbar/>
                     </span>
                     <div id="page-container">
                         {alert.message &&
