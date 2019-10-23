@@ -32,6 +32,36 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class SecurityController extends AbstractController
 {
+
+    /**
+     * registerApi
+     * @param  Symfony\Component\HttpFoundation\Request $request
+     * @param  Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface $encoder
+     *
+     * @return void
+     */
+    public function registerApi(Request $request, UserPasswordEncoderInterface $encoder)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $email = $request->request->get('username');
+        $password = $request->request->get('password');
+        $roles = $request->request->get('roles');
+
+        if (!$roles) {
+            $roles = json_encode(["ROLE_USER"]);
+        }
+
+        $user = new User();
+        $user->setEmail($email);
+        $user->setPassword($encoder->encodePassword($user, $password));
+        $user->setRoles(($roles));
+        $em->persist($user);
+        $em->flush();
+
+        return new Response(sprintf('User %s successfully created', $user->getUsername()));
+    }
+
     /**
      * login
      * @Route("/login", name="login")

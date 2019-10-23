@@ -4,13 +4,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Product from './product';
+import { connect } from 'react-redux';
 
 export default class Login extends React.Component 
 {
     state = {
-        user: [],
+        user: this.props.user || [],
         email: "",
         password: "",
+        token: this.props.token || ""
     };
 
     onChange = (event) => {
@@ -21,30 +23,31 @@ export default class Login extends React.Component
 
     handleLogin = (event) => {
         event.preventDefault();
-        console.log("Email = " + this.state.email + " | Password = " + this.state.password);
-         axios.post('http://localhost:8000/login', {
-                 email: this.state.email, 
-                 password: this.state.password
+         axios.post('http://localhost:8000/api/login_check', {
+                username: this.state.email, 
+                password: this.state.password
+             }, 
+             { 
+                headers: { "Content-Type": "application/json" } 
              })
-             .then(response => {
-                 console.log(response.data);
-        //         //if (response.data.token !== '') {
-        //             // const action = { type: 'TOGGLE_LOGSTATE', value: {logState: this.state.logState, order: 'login'} };
-        //             // this.props.dispatch(action);
-        //             // this.setState({logState: true});
-        //             //window.location = '/';
-        //         //}
-        //         // else {
-        //         //     alert('bad credentials');
-        //         // }
-        //         this.setState({email: '', password: ''});
+              .then(response => {
+                    this.setState({token: response.data.token});
+                    this.setState({user: this.getUserFromToken(response.data.token)});
+                    // window.location = '/';
              })
              .catch((err) => console.log(err));
         //     //this.setState({email: '', password: ''});
     }
 
+    getUserFromToken = (token) => {
+        const base64Url = this.state.token.split('.')[1];
+        const base64 = base64Url.replace('-', '+').replace('_', '/');
+        const data = JSON.parse(window.atob(base64));
+        return data.data;
+    }
+
     render() {
-        const user = this.props;
+        const user = this.state.user;
         return (
             <div className="container">
                 <div className="row">
@@ -59,9 +62,9 @@ export default class Login extends React.Component
                                 <form method="post" onSubmit={this.handleLogin}>
                                     {(user === [] || typeof(user.email) === 'undefined') ? "" : 
                                         <div className="mb-3">
-                                            You are logged in as
-                                            { user.email },
-                                            <a href="{{ path('logout') }}">Logout</a>
+                                            You are logged in as 
+                                            { " " + user.email },
+                                            <a href="{{ path('logout') }}"> Logout</a>
                                         </div>
                                     }
 
@@ -78,7 +81,7 @@ export default class Login extends React.Component
                                     </div>
 
 
-                                    <button type="submit" className="btn btn-primary btn-block m-t-10">SE CONNECTER
+                                    <button className="btn btn-primary btn-block m-t-10" >SE CONNECTER
                                         <i className="fa fa-sign-in"></i>
                                     </button>
 
@@ -86,7 +89,6 @@ export default class Login extends React.Component
                                         <span>Pas encore client ?</span>
                                     </div>
                                     <a className="btn btn-secondary btn-block" href="/register" role="button">CREER UN COMPTE</a>
-                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
                                 </form>
                             </div>
                         </div>
