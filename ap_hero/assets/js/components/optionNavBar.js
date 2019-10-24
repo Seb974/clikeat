@@ -2,26 +2,24 @@ import React, { Component } from 'react';
 import Cart from './cart';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-export default class OptionNavbar extends Component {
+class OptionNavbar extends Component {
 
     state = {
-        user: this.props.details || [],
         count: 0,
     }
 
-    handleConnexion = () => {
-        axios.get('http://localhost:8000/login')
-            .then(response => {
-                this.setState({ products: response.data })
-                })
-            .catch((err) => console.log(err));
-    }
+    static propTypes = {
+        isAuthenticated: PropTypes.bool,
+        user: PropTypes.object
+    };
 
     render() {
-        const {user, count} = this.props;
+        const { user, isAuthenticated } = this.props;
+        const { count } = this.state;
         
-        if (user !== [] && typeof(user) !== 'undefined') {
+        if (isAuthenticated) {
             return (
                 <ul>
                     <li className="dropdown">
@@ -163,3 +161,10 @@ export default class OptionNavbar extends Component {
         }
     }
 }
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
+  });
+  
+  export default connect( mapStateToProps)(OptionNavbar);

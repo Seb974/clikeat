@@ -1,5 +1,3 @@
-console.log("Hello friends !");
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
