@@ -1,24 +1,23 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import axios from 'axios';
 import Product from './product';
+import { connect } from 'react-redux';
+import { getProducts } from '../actions/productActions';
+import PropTypes from 'prop-types';
 
-export default class Products extends React.Component 
+class Products extends React.Component 
 {
-    state = {
-        products: [],
-    };
-
-    componentDidMount = () => {
-        axios.get('http://localhost:8000/api_index')
-            .then(response => {
-                this.setState({ products: response.data })
-                })
-            .catch((err) => console.log(err));
-    }
+    static propTypes = {
+        getProducts: PropTypes.func.isRequired,
+        product: PropTypes.object.isRequired,
+        isAuthenticated: PropTypes.bool
+      };
+    
+      componentDidMount() {
+        this.props.getProducts();
+      }
 
     render() {
-        const products = this.state.products;
+        const products = this.props.product.products;
         return (
             <div id="content-wrap">
                 <div className="product-wrapper">
@@ -39,4 +38,12 @@ export default class Products extends React.Component
     }
 }
 
-// ReactDOM.render(<Products/>, document.getElementById("react-product-list"));
+const mapStateToProps = state => ({
+    product: state.product,
+    isAuthenticated: state.auth.isAuthenticated
+  });
+  
+  export default connect(
+    mapStateToProps,
+    { getProducts }
+  )(Products);
