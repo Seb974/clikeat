@@ -1,5 +1,3 @@
-console.log("Hello baby !");
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CartItem from './cartItem';

@@ -1,5 +1,3 @@
-console.log("From product !");
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CartItem from './cartItem';

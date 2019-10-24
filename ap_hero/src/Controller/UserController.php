@@ -116,9 +116,9 @@ class UserController extends AbstractController
         // }
         // $user = $userRepository->findOneBy(['email' => $email]);
         // return JsonResponse::fromJsonString($serializer->serializeEntity($user, 'user'));
-        $clientUser = $request->query->get('user');
-        $user = $userRepository->find($clientUser['id']);
-        return JsonResponse::fromJsonString($serializer->serializeEntity($user, 'user'));
+        // $clientUser = $request->query->get('user');
+        // $user = $userRepository->find($clientUser['id']);
+        // return JsonResponse::fromJsonString($serializer->serializeEntity($user, 'user'));
     }
 
     /**
