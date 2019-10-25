@@ -4,7 +4,7 @@ import { getProducts } from '../actions/productActions';
 import { addItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';
 
-class Products extends React.Component 
+class ProductList extends React.Component 
 {
     static propTypes = {
         getProducts: PropTypes.func.isRequired,
@@ -111,4 +111,4 @@ const mapStateToProps = state => ({
   export default connect(
     mapStateToProps,
     { getProducts, addItem }
-  )(Products);
+  )(ProductList);

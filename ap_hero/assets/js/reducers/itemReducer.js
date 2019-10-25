@@ -7,11 +7,12 @@ import {
     ITEMS_LOADING
   } from '../actions/types';
   
+  //const storedCart = localStorage.getItem('cart') || [];
   const initialState = {
     items: [],
-    totalToPayHT: 0,
-    totalToPayTTC: 0,
-    totalTax: 0,
+    totalToPayTTC: 0,   //getTotalTTC(storedCart),
+    totalToPayHT: 0,    //getTotalHT(storedCart),
+    totalTax: 0,        //getTotalTax(storedCart),
     loading: false
   };
   
@@ -27,6 +28,7 @@ import {
           loading: false
         };
       case DELETE_ITEM:
+        // localStorage.setItem('cart', state.items.filter(item => item !== action.payload));
         return {
           ...state,
           items: state.items.filter(item => item !== action.payload),
@@ -39,9 +41,10 @@ import {
           if (element.product.name == action.payload.product.name && element.parent.name == action.payload.parent.name ) {
             element.quantity += action.payload.quantity;
             action.payload.quantity = 0;
+            return state;
           }
-          return state;
         })
+        // action.payload.quantity !== 0 ? localStorage.setItem('cart', [action.payload, ...state.items]) : localStorage.setItem('cart', state.items);;
         return {
           ...state,
           items: (action.payload.quantity == 0) ? state.items :[action.payload, ...state.items],
