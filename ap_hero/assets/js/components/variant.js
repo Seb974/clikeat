@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { addItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';
 
-class Variant extends React.Component 
+class VariantAction extends React.Component 
 {
     state = {
         variant: this.props.details || {},
@@ -25,14 +25,14 @@ class Variant extends React.Component
     render() {
         const variant = this.state.variant;
         return (
-            <li key={variant.id}>
-                <i className="fas fa-dolly"></i> 
-                {" "} {variant.stock.quantity} {" "}
+            // <li key={variant.id}>
+            //     <i className="fas fa-dolly"></i> 
+            //     {" "} {variant.stock.quantity} {" "}
                 <button className="btn btn-primary btn-sm" onClick={this.handleClick} id={variant.id}>
                     <i className="fas fa-shopping-cart"></i>
                     {variant.name}  à {variant.price}€
                 </button>
-            </li>
+            // </li>
             );
     }
 }
@@ -45,4 +45,4 @@ const mapStateToProps = state => ({
   export default connect(
     mapStateToProps,
     { addItem }
-  )(Variant);
+  )(VariantAction);

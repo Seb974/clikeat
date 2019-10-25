@@ -32,7 +32,6 @@ import {
           items: state.items.filter(item => item !== action.payload)
         };
       case ADD_ITEM:
-
         state.items.forEach(element => {
           if (element.product.name == action.payload.product.name && element.parent.name == action.payload.parent.name ) {
             element.quantity += action.payload.quantity;
