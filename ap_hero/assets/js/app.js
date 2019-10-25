@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import { Provider } from 'react-redux';
-import Navbar from './components/navBar';
+import Navbar from './components/navbar';
 import Products from './components/products';
 import Login from './components/login';
 import store from './store';

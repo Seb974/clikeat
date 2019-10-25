@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';
@@ -79,5 +77,3 @@ const mapStateToProps = state => ({
     mapStateToProps,
     { getItems, deleteItem }
   )(Cart);
-
-// ReactDOM.render(<Cart/>, document.getElementById('cart-summary'));

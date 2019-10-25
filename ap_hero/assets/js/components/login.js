@@ -96,7 +96,6 @@ class Login extends React.Component
                 );
             } 
             else {
-                //return <Products/>;
                 return <Redirect to='/'/>
             }
         } 
@@ -109,14 +108,6 @@ const mapStateToProps = state => ({
   });
   
   export default connect( mapStateToProps, { login, clearErrors })(Login);
-
-
-
-// style="margin-top:50px"
-
-// {% if error %}
-//     <div className="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-// {% endif %}
 
 {/* <div id="fb-root"></div>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v4.0&appId=502084787008815&autoLogAppEvents=1"></script>
