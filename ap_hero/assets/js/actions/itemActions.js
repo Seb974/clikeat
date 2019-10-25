@@ -42,8 +42,8 @@ export const deleteItem = item => (dispatch, getState) => {
   dispatch({
     type: INCREASE_PRODUCT_STOCK,
     payload: {
-      product: item.variant, 
-      variant: item.parent,
+      product: item.parent, 
+      variant: item.product,
       quantity: item.quantity,
     }
   })
