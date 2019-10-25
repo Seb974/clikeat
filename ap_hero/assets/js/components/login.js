@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../actions/authActions';
 import { clearErrors } from '../actions/errorActions';
+import {Redirect} from "react-router-dom"; 
 import Products from './products';
 
 class Login extends React.Component 
@@ -22,25 +23,6 @@ class Login extends React.Component
         clearErrors: PropTypes.func.isRequired
     };
 
-    componentDidUpdate = (prevProps) => {
-         const { error, isAuthenticated } = this.props;
-    //     console.log("error : " + error + " | previous error : " + prevProps.error);
-    //      if (error !== prevProps.error) {
-    // //       // Check for register error
-    //       if (error.id === 'LOGIN_FAIL') {
-    //         this.setState({ msg: error.msg.msg });
-    //       } else {
-    //         this.setState({ msg: null });
-    //       }
-    //      }
-    
-    //     // If authenticated, close modal
-        //   if (isAuthenticated) {
-        //     //   this.props.clearErrors();
-        //       window.location = '/';
-        //   }
-    }
-
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value });
       };
@@ -49,6 +31,7 @@ class Login extends React.Component
         e.preventDefault();
         const { email, password } = this.state;
         const user = { email, password};
+        this.setState({email: '', password: ''});
         this.props.login(user);
       };
 
@@ -113,7 +96,8 @@ class Login extends React.Component
                 );
             } 
             else {
-                return <Products/>;
+                //return <Products/>;
+                return <Redirect to='/'/>
             }
         } 
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Cart from './cart';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { logout } from '../actions/authActions';
 import PropTypes from 'prop-types';
 
 class OptionNavbar extends Component {
@@ -12,8 +13,14 @@ class OptionNavbar extends Component {
 
     static propTypes = {
         isAuthenticated: PropTypes.bool,
-        user: PropTypes.object
+        user: PropTypes.object,
+        logout: PropTypes.func.isRequired,
     };
+
+    handleLogout = (e) => {
+        e.preventDefault();
+        this.props.logout();
+    }
 
     render() {
         const { user, isAuthenticated, item } = this.props;
@@ -84,11 +91,10 @@ class OptionNavbar extends Component {
                                     <a className="dropdown-item" href="{{ path('stock_index') }}">
                                         <i className="fas fa-box-open"></i>Stocks</a>
                                     <div className="dropdown-divider"></div>
-
                                 </span>
                                 )
                             }
-                             <a className="dropdown-item" href="{{ path('disconnect') }}">
+                             <a className="dropdown-item" href="#" onClick={ this.handleLogout }>
                                 <i className="fas fa-sign-out-alt"></i>Se déconnecter</a>
                         </div>
                     </li>
@@ -160,4 +166,4 @@ const mapStateToProps = state => ({
     user: state.auth.user,
   });
   
-  export default connect( mapStateToProps)(OptionNavbar);
+  export default connect( mapStateToProps, { logout })(OptionNavbar);

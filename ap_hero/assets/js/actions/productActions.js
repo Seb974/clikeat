@@ -6,7 +6,8 @@ import { returnErrors } from './errorActions';
 export const getProducts = () => dispatch => {
   dispatch(setProductsLoading());
   axios
-    .get('http://localhost:8000/api_index')
+    //.get('http://localhost:8000/api_index')
+    .get('/api_index')
     .then((res) => {
         dispatch({
           type: GET_PRODUCTS,
