@@ -38,7 +38,7 @@ class Variant extends React.Component
 }
 
 const mapStateToProps = state => ({
-    // item: state.item,
+    item: state.item,
     isAuthenticated: state.auth.isAuthenticated
   });
   
