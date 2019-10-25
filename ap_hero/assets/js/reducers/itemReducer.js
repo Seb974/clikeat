@@ -29,7 +29,7 @@ import {
       case DELETE_ITEM:
         return {
           ...state,
-          items: state.items.filter(item => item._id !== action.payload)
+          items: state.items.filter(item => item !== action.payload)
         };
       case ADD_ITEM:
 

@@ -142,7 +142,14 @@ class OptionNavbar extends Component {
                     <li className="dropdown dropdown-notification">
                         <a href="{{path('get_cart') }}" data-toggle="dropdown">
                             <i className="fas fa-shopping-cart"></i>
-                            { count <= 0 ? "" : (<span className="badge badge-cart">{ count }</span>) }
+                            { item.items.length <= 0 ? "" : 
+                                (<span className="badge badge-cart">
+                                    { item.items.reduce((cumul, current) => {
+                                        return current.quantity == null ? cumul : cumul + current.quantity;
+                                        }, 0) 
+                                    }
+                                </span>) 
+                            }
                         </a>
                         <div className="dropdown-menu dropdown-menu-right" id="cart-summary">
                             <Cart/>
