@@ -62,7 +62,7 @@ class SecurityController extends AbstractController
         return new Response(sprintf('User %s successfully created', $user->getUsername()));
     }
 
-    /**
+    /*
      * login
      * @Route("/login", name="login")
      * @param Symfony\Component\Security\Http\Authentication\AuthenticationUtils $authenticationUtils
@@ -70,16 +70,16 @@ class SecurityController extends AbstractController
      *
      * @return Symfony\Component\HttpFoundation\Response
      */
-    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
-    {
-        // if ($this->getUser()) {
-        //    $this->redirectToRoute('target_path');
-        // }
+    // public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
+    // {
+    //     // if ($this->getUser()) {
+    //     //    $this->redirectToRoute('target_path');
+    //     // }
 
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
-    }
+    //     $error = $authenticationUtils->getLastAuthenticationError();
+    //     $lastUsername = $authenticationUtils->getLastUsername();
+    //     return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    // }
 
     /**
      * register

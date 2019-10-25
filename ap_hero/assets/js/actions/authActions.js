@@ -18,7 +18,7 @@ export const loadUser = () => (dispatch, getState) => {
   dispatch({ type: USER_LOADING });
 
   axios
-    .get('http://localhost:8000/user/current', tokenConfig(getState))
+    .get('/user/current', tokenConfig(getState))
     .then((res) => {
       dispatch({
         type: USER_LOADED,
@@ -69,9 +69,8 @@ export const login = ({ email, password }) => dispatch => {
   const config = { headers: { 'Content-Type': 'application/json' } };
   const body = JSON.stringify({ username: email, password: password });
 
-//   axios.post('http://localhost:8000/api/login_check')
   axios
-    .post('http://localhost:8000/api/login_check', body, config)
+    .post('/api/login_check', body, config)
     .then((res) => {
         dispatch({
           type: LOGIN_SUCCESS,

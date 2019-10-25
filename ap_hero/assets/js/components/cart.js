@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';
@@ -13,6 +11,7 @@ class Cart extends React.Component
 
     static propTypes = {
         getItems: PropTypes.func.isRequired,
+        deleteItem: PropTypes.func.isRequired,
         item: PropTypes.object.isRequired,
         isAuthenticated: PropTypes.bool
       };
@@ -21,8 +20,8 @@ class Cart extends React.Component
         this.props.getItems();
       }
     
-    onDeleteClick = id => {
-        this.props.deleteItem(id);
+    onDeleteClick = item => {
+        this.props.deleteItem(item);
       };
 
     displayItems = () => {
@@ -32,7 +31,7 @@ class Cart extends React.Component
               <a href="#" className="d-flex flex-row ml-auto">
                   x{ props.details.quantity } { props.details.parent.name } { props.details.product.name } | { props.details.product.price * props.details.quantity }€
               </a>
-              <button className="btn btn-link"><i className="fa fa-trash"></i></button> 
+              <button className="btn btn-link" onClick={() => this.onDeleteClick(props.details)}><i className="fa fa-trash"></i></button> 
           </li>
         );
       }
@@ -78,5 +77,3 @@ const mapStateToProps = state => ({
     mapStateToProps,
     { getItems, deleteItem }
   )(Cart);
-
-// ReactDOM.render(<Cart/>, document.getElementById('cart-summary'));

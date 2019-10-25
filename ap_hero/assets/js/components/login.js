@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../actions/authActions';
 import { clearErrors } from '../actions/errorActions';
-import Products from './products';
+import {Redirect} from "react-router-dom"; 
 
 class Login extends React.Component 
 {
@@ -22,25 +22,6 @@ class Login extends React.Component
         clearErrors: PropTypes.func.isRequired
     };
 
-    componentDidUpdate = (prevProps) => {
-         const { error, isAuthenticated } = this.props;
-    //     console.log("error : " + error + " | previous error : " + prevProps.error);
-    //      if (error !== prevProps.error) {
-    // //       // Check for register error
-    //       if (error.id === 'LOGIN_FAIL') {
-    //         this.setState({ msg: error.msg.msg });
-    //       } else {
-    //         this.setState({ msg: null });
-    //       }
-    //      }
-    
-    //     // If authenticated, close modal
-        //   if (isAuthenticated) {
-        //     //   this.props.clearErrors();
-        //       window.location = '/';
-        //   }
-    }
-
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value });
       };
@@ -49,6 +30,7 @@ class Login extends React.Component
         e.preventDefault();
         const { email, password } = this.state;
         const user = { email, password};
+        this.setState({email: '', password: ''});
         this.props.login(user);
       };
 
@@ -113,7 +95,7 @@ class Login extends React.Component
                 );
             } 
             else {
-                return <Products/>;
+                return <Redirect to='/'/>
             }
         } 
 }
@@ -125,14 +107,6 @@ const mapStateToProps = state => ({
   });
   
   export default connect( mapStateToProps, { login, clearErrors })(Login);
-
-
-
-// style="margin-top:50px"
-
-// {% if error %}
-//     <div className="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-// {% endif %}
 
 {/* <div id="fb-root"></div>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v4.0&appId=502084787008815&autoLogAppEvents=1"></script>

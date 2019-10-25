@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import { Provider } from 'react-redux';
-import Navbar from './components/navBar';
-import Products from './components/products';
+import Navbar from './components/navbar';
+import ProductList from './components/productList';
 import Login from './components/login';
 import store from './store';
 import { loadUser } from './actions/authActions';
@@ -37,7 +37,7 @@ class App extends React.Component
                             <div className={`alert ${alert.type}`}>{alert.message}</div>
                         }
                             <Switch>
-                                <Route path='/' exact component={Products} />
+                                <Route path='/' exact component={ProductList} />
                                 <Route path='/login' component={Login} />
                             </Switch>
                     </div>
