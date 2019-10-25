@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import CartItem from './cartItem';
 import Variant from './variant';
-
 export default class Product extends React.Component 
 {
     state = {
