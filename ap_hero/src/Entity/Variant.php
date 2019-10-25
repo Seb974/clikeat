@@ -43,6 +43,12 @@ class Variant
      */
     private $product;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Tva")
+     * @Groups({"product", "variant"})
+     */
+    private $tva;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -96,6 +102,18 @@ class Variant
     public function setProduct(?Product $product): self
     {
         $this->product = $product;
+
+        return $this;
+    }
+
+    public function getTva(): ?Tva
+    {
+        return $this->tva;
+    }
+
+    public function setTva(?Tva $tva): self
+    {
+        $this->tva = $tva;
 
         return $this;
     }

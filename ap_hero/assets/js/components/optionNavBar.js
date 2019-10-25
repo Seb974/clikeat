@@ -16,9 +16,9 @@ class OptionNavbar extends Component {
     };
 
     render() {
-        const { user, isAuthenticated } = this.props;
-        const { count } = this.state;
-        
+        const { user, isAuthenticated, item } = this.props;
+        let count = 0;
+
         if (isAuthenticated) {
             return (
                 <ul>
@@ -31,13 +31,10 @@ class OptionNavbar extends Component {
                         </Link>
                         <div className="dropdown-menu dropdown-menu-right">
                             <a className="dropdown-item" href="{{ path('user_self_show') }}">
-                                <i className="fas fa-user"></i>Mon profil
-                            </a>
+                                <i className="fas fa-user"></i>Mon profil</a>
+                            <div className="dropdown-divider"></div>
                             { user.roles.indexOf('ROLE_ADMIN') === -1 ? "" : (
                                 <span>
-                                    <a className="dropdown-item" href="{{ path('user_self_show') }}">
-                                        <i className="fas fa-user"></i>Mon profil</a>
-                                    <div className="dropdown-divider"></div>
                                     <a className="dropdown-item" href="{{ path('user_index') }}">
                                         <i className="fas fa-users"></i>Users</a>
                                     <div className="dropdown-divider"></div>
@@ -68,43 +65,31 @@ class OptionNavbar extends Component {
                                     <a className="dropdown-item" href="{{ path('stock_index') }}">
                                         <i className="fas fa-box-open"></i>Stocks</a>
                                     <div className="dropdown-divider"></div>
-                                    <a className="dropdown-item" href="{{ path('disconnect') }}">
-                                        <i className="fas fa-sign-out-alt"></i>Se déconnecter
-                                    </a>
                                 </span>
                                 )
                             }
                             { user.roles.indexOf('ROLE_DELIVERER') === -1 ? "" : (
                                 <span>
-                                    <a className="dropdown-item" href="{{ path('user_self_show') }}">
-                                        <i className="fas fa-user"></i>Mon profil</a>
-                                    <div className="dropdown-divider"></div>
                                     <a className="dropdown-item" href="{{ path('deliverer') }}">
                                         <i className="fas fa-truck"></i>Livraisons</a>
                                     <div className="dropdown-divider"></div>
-                                    <a className="dropdown-item" href="{{ path('disconnect') }}">
-                                        <i className="fas fa-sign-out-alt"></i>Se déconnecter
-                                    </a>
                                 </span>
                                 )
                             }
                             { user.roles.indexOf('ROLE_SUPPLIER') === -1 ? "" : (
                                 <span>
-                                    <a className="dropdown-item" href="{{ path('user_self_show') }}">
-                                        <i className="fas fa-user"></i>Mon profil</a>
-                                    <div className="dropdown-divider"></div>
                                     <a className="dropdown-item" href="{{ path('get_order') }}">
                                         <i className="fas fa-cash-register"></i>Orders</a>
                                     <div className="dropdown-divider"></div>
                                     <a className="dropdown-item" href="{{ path('stock_index') }}">
                                         <i className="fas fa-box-open"></i>Stocks</a>
                                     <div className="dropdown-divider"></div>
-                                    <a className="dropdown-item" href="{{ path('disconnect') }}">
-                                        <i className="fas fa-sign-out-alt"></i>Se déconnecter
-                                    </a>
+
                                 </span>
                                 )
                             }
+                             <a className="dropdown-item" href="{{ path('disconnect') }}">
+                                <i className="fas fa-sign-out-alt"></i>Se déconnecter</a>
                         </div>
                     </li>
                     <li>
@@ -115,7 +100,14 @@ class OptionNavbar extends Component {
                     <li className="dropdown dropdown-notification">
                         <a href="{{path('get_cart') }}" data-toggle="dropdown">
                             <i className="fas fa-shopping-cart"></i>
-                            { count <= 0 ? "" : (<span className="badge badge-cart">{ count }</span>) }
+                            { item.items.length <= 0 ? "" : 
+                                (<span className="badge badge-cart">
+                                    { item.items.reduce((cumul, current) => {
+                                        return current.quantity == null ? cumul : cumul + current.quantity;
+                                        }, 0) 
+                                    }
+                                </span>) 
+                            }
                         </a>
                         <div className="dropdown-menu dropdown-menu-right" id="cart-summary">
                             <Cart/>
@@ -164,6 +156,7 @@ class OptionNavbar extends Component {
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
+    item: state.item,
     user: state.auth.user,
   });
   

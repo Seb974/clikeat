@@ -8,7 +8,6 @@ export const getProducts = () => dispatch => {
   axios
     .get('http://localhost:8000/api_index')
     .then((res) => {
-        console.log(res.data);
         dispatch({
           type: GET_PRODUCTS,
           payload: res.data

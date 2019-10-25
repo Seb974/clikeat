@@ -52,8 +52,9 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Tva")
-     * @Groups({"product", "category", "allergen", "supplier", "variant"})
+     * 
      */
+    // @Groups({"product", "category", "allergen", "supplier", "variant"})
     private $tva;
 
     /**
