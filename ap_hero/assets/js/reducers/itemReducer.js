@@ -29,7 +29,10 @@ import {
       case DELETE_ITEM:
         return {
           ...state,
-          items: state.items.filter(item => item !== action.payload)
+          items: state.items.filter(item => item !== action.payload),
+          totalToPayTTC: getTotalTTC(state.items.filter(item => item !== action.payload)),
+          totalTax: getTotalTax(state.items.filter(item => item !== action.payload)),
+          totalToPayHT: getTotalHT(state.items.filter(item => item !== action.payload)),
         };
       case ADD_ITEM:
         state.items.forEach(element => {
