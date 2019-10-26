@@ -50,28 +50,21 @@ class ProductList extends React.Component
         });
     }
 
-    // <Link to="/"><i className="fas fa-home"></i></Link>
-
-
-
     displayProducts = () => {
         let Product = (props) => {
           return (
             <div className="col-12 col-sm-6 col-md-4 react-product">
                 <div className="card card-lg">
                     <div className="card-img">
-                        {/* <a href="{{ path('product_show', { id: product.id }) }}"> */}
                         <Link to={ "/show/" + props.details.id }>
                             { 
                                 (props.details.picture !== null && props.details.picture !== "") ? <img src={ 'uploads/pictures/' + props.details.picture.b64 } className="card-img-top" alt={ props.details.picture.b64 }/> : ""
                             }
                         </Link>
-                        {/* </a> */}
                     </div>
                     <div className="card-block">
                         <ul>
                             <li key={props.details.id}>
-                                {/* <a href="{{ path('product_show', { id: product.id }) }}"> */}
                                 <Link to={ "/show/" + props.details.id }>
                                     { props.details.name }
                                     <br/>
@@ -79,7 +72,6 @@ class ProductList extends React.Component
                                     { props.details.supplier.preparationPeriod }mn @
                                     { props.details.supplier.name }
                                 </Link>
-                                {/* </a> */}
                             </li>
                         </ul>
                         <ul>

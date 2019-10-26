@@ -5,23 +5,31 @@ import { returnErrors } from './errorActions';
 import productReducer from '../reducers/productReducer';
 
 export const getProducts = () => dispatch => {
-  dispatch(setProductsLoading());
-  axios
-    .get('/api_index')
-    .then((res) => {
-        dispatch({
-          type: GET_PRODUCTS,
-          payload: res.data
-        })
-    }
-    )
-    .catch(err =>
-      dispatch(returnErrors(err.response.data, err.response.status))
-    );
+  let storedProducts = localStorage.getItem('products') || "";
+  if (storedProducts !== "") {
+    storedProducts = JSON.parse(storedProducts);
+    dispatch({
+      type: GET_PRODUCTS,
+      payload: storedProducts
+    })
+  } else {
+    dispatch(setProductsLoading());
+    axios
+      .get('/api_index')
+      .then((res) => {
+          dispatch({
+            type: GET_PRODUCTS,
+            payload: res.data
+          })
+      }
+      )
+      .catch(err =>
+        dispatch(returnErrors(err.response.data, err.response.status))
+      );
+  }
 };
 
 export const getProduct = id => dispatch => {
-
   let storedProducts = localStorage.getItem('products') || "";
   if (storedProducts !== "") {
     storedProducts = JSON.parse(storedProducts);

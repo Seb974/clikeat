@@ -43,15 +43,15 @@ import {
           isLoading: false,
           user: userExtractor(action.payload.token)
         };
+      case LOGOUT_SUCCESS:
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          if (localStorage.getItem('products')) {
+            localStorage.removeItem('products')
+          }
       case AUTH_ERROR:
       case LOGIN_FAIL:
-      case LOGOUT_SUCCESS:
       case REGISTER_FAIL:
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        if (localStorage.getItem('products')) {
-          localStorage.removeItem('products')
-        }
         return {
           ...state,
           token: null,

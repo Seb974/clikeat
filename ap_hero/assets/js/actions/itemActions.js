@@ -24,6 +24,7 @@ export const addItem = item => (dispatch, getState) => {
             parent: item.product,
         },
     });
+    alert("passage dans addItem de itemActions");
     dispatch({
       type: DECREASE_PRODUCT_STOCK,
       payload: {
