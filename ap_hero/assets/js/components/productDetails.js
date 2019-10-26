@@ -9,7 +9,7 @@ class ProductDetails extends React.Component
     static propTypes = {
         getProduct: PropTypes.func.isRequired,
         addItem: PropTypes.func.isRequired,
-        product: PropTypes.object.isRequired,       //.isRequired,
+        product: PropTypes.object.isRequired,
         isAuthenticated: PropTypes.bool
     };
 
@@ -18,22 +18,25 @@ class ProductDetails extends React.Component
     }
 
     displayAllergens = (product) => {
-        if (product.allergens) {
+        let Allergen = (props) => {
             return (
-                <p>{"Allergènes : "}<br/>
-                { product.allergens.map( (allergen, index) => {
-                        return (
-                            <span>
-                                { allergen.name + (index === product.allergens.length) ? "" : "," }
-                            </span>
-                        );
-                    })
-                }
-                </p>
-            )
-        } else {
-            return <p>{"Ne contient pas de produits allergènes."}</p>
+                <span>
+                    { props.details.name + " " }
+                </span>
+            );
         }
+        if (product.allergens) {
+            if (product.allergens.length > 0) {
+
+                return (
+                    product.allergens.map( (allergen) => { 
+                        return product.allergens.indexOf(allergen) == 0 ? <span>Allergènes :  <Allergen details={allergen} /></span> 
+                                                                        : <span><Allergen details={allergen} /></span>  
+                    })
+                );
+            }
+        }
+        return <span>Ne contient pas de produits allergènes.</span>
     }
 
     displayVariants = (product) => {
@@ -119,6 +122,7 @@ class ProductDetails extends React.Component
 
     render() {
         const product = this.props.product.selected ;
+        console.log(product);
         return (
             <section className="p-t-30">
                 <div className="container">
@@ -132,9 +136,9 @@ class ProductDetails extends React.Component
                                         <div className="post-meta">
                                             <span>
                                                 <i className="fas fa-utensils"></i>
-                                                {/* { product.category.name } */}
+                                                { product.category ? product.category.name : "" }
                                             </span>
-                                            { this.displayAllergens(product) }
+                                            <p>{ this.displayAllergens(product) }</p>
                                         </div>
                                     </div>
                                 </div>
