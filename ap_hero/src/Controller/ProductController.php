@@ -20,9 +20,11 @@ use App\Entity\Stock;
 use App\Form\ProductType;
 use App\Form\CartItemType;
 use App\Repository\ProductRepository;
+use App\Service\Serializer\SerializerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -98,6 +100,22 @@ class ProductController extends AbstractController
         return $this->render('product/show.html.twig', [
             'product' => $product,
         ]);
+    }
+
+    /**
+     * getProduct
+     * @Route("/api/{id}", name="product_show", methods={"GET"})
+     * @param  App\Entity\Product $product
+     *
+     * @return Symfony\Component\HttpFoundation\Response
+     */
+    public function getProduct(Product $product, SerializerService $serializer): Response
+    {
+        // return $this->render('product/show.html.twig', [
+        //     'product' => $product,
+        // ]);
+        // $products = $productRepository->findAll();
+        return JsonResponse::fromJsonString($serializer->serializeEntity($product, 'product'));
     }
 
     /**

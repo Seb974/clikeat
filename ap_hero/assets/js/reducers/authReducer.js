@@ -49,6 +49,9 @@ import {
       case REGISTER_FAIL:
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        if (localStorage.getItem('products')) {
+          localStorage.removeItem('products')
+        }
         return {
           ...state,
           token: null,
