@@ -40,7 +40,8 @@ class App extends React.Component
                             <Switch>
                                 <Route path='/' exact component={ProductList} />
                                 <Route path='/show/:id' component={ProductDetails} />
-                                <Route path='/login' component={Login} />
+                                <Route path='/login' component={Login} />       
+                                <Route path="/*" render={() => (<Redirect to="/" />)} /> 
                             </Switch>
                     </div>
                 </span>
