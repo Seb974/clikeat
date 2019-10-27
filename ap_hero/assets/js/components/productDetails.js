@@ -18,9 +18,7 @@ class ProductDetails extends React.Component
     }
 
     handleClick = (product, variant) => {
-        alert("handleckick in productDetails");
         const newItem = { product: product, variant: variant, quantity: 1 };
-        console.log(newItem);
         this.props.addItem(newItem);
     };
 
@@ -129,7 +127,6 @@ class ProductDetails extends React.Component
 
     render() {
         const product = this.props.product.selected ;
-        console.log(product);
         return (
             <section className="p-t-30">
                 <div className="container">

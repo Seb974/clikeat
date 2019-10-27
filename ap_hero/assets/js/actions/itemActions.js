@@ -3,15 +3,24 @@ import { GET_ITEMS, ADD_ITEM, DELETE_ITEM, ITEMS_LOADING, INCREASE_PRODUCT_STOCK
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 import userExtractor from '../helpers/userExtractor';
+import store from '../store';
 
 export const getItems = () => dispatch => {
-
+  let storedCart = localStorage.getItem('cart') || {};
+  if (Object.keys(storedCart).length > 0) {
+    storedCart = JSON.parse(storedCart);
+    dispatch({
+      type: GET_ITEMS,
+      payload: storedCart
+    })
+  } else {
     const storedToken = localStorage.getItem('token') || "";
     const currentUserCart = storedToken !== "" ? (userExtractor(storedToken).cart || [] ) : [];
     dispatch({
         type: GET_ITEMS,
         payload: currentUserCart,
     });
+  }
 };
 
 export const addItem = item => (dispatch, getState) => {
@@ -24,7 +33,6 @@ export const addItem = item => (dispatch, getState) => {
             parent: item.product,
         },
     });
-    alert("passage dans addItem de itemActions");
     dispatch({
       type: DECREASE_PRODUCT_STOCK,
       payload: {

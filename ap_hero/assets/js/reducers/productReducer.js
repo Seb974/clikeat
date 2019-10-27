@@ -25,7 +25,7 @@ import { GET_PRODUCTS, GET_PRODUCT, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STO
       case INCREASE_PRODUCT_STOCK:
           let pIndex = 0;
           let sIndex = -1;
-          let vIndex = -1; //state.products[pIndex].variants.indexOf(action.payload.variant);
+          let vIndex = -1;
           for (let i = 0; i < state.products.length; i++) {
             if (state.products[i].id === action.payload.product.id) {
               pIndex = i;
@@ -43,8 +43,6 @@ import { GET_PRODUCTS, GET_PRODUCT, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STO
           }
           let newSelected = state.selected;
           let newProducts = state.products;
-          console.log(vIndex);
-          console.log('productReducer');
           if (vIndex !== -1) {
               let initialQty = state.products[pIndex].variants[vIndex].stock.quantity;
               let newVariants = [];
@@ -61,7 +59,6 @@ import { GET_PRODUCTS, GET_PRODUCT, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STO
                   return index === pIndex ? {...product, variants: newVariants} : product;
                 }
               );
-              console.log(newSelected);
               localStorage.setItem('products', JSON.stringify(newProducts));
           }
           return {
