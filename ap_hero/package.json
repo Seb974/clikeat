@@ -18,6 +18,7 @@
     "dependencies": {
         "axios": "^0.19.0",
         "encore": "^0.0.30-beta",
+        "handlebars": "^4.0.0",
         "history": "^4.10.1",
         "prop-types": "^15.7.2",
         "react": "^16.10.2",
@@ -27,6 +28,7 @@
         "reactstrap": "^8.1.1",
         "redux": "^4.0.4",
         "redux-logger": "^3.0.6",
-        "redux-thunk": "^2.3.0"
+        "redux-thunk": "^2.3.0",
+        "uglify-js": "^2.6.0"
     }
 }
