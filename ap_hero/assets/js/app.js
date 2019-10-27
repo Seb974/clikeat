@@ -1,54 +1,47 @@
-/*
- * Welcome to your app's main JavaScript file!
- *
- * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
- */
-
-// Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
-// const $ = require('jquery');
-
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
-
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import {Router, Route, Switch, Redirect} from "react-router-dom";
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
 import { Provider } from 'react-redux';
-import Store from '../store/configureStore';
-import Navbar from './navBar';
-import Products from './products';
-import Login from './login';
-
+import Navbar from './components/navbar';
+import ProductList from './components/productList';
+import ProductDetails from './components/productDetails';
+import Login from './components/login';
+import store from './store';
+import { loadUser } from './actions/authActions';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-// any CSS you require will output into a single css file (app.css in this case)
 require('../css/app.css');
 
-export default class App extends React.Component 
+class App extends React.Component 
 {
 
     state = {
-        user: this.props.items || [],
         cart: this.props.cart || [],
+    };
+
+    static propTypes = {
+        isAuthenticated: PropTypes.bool,
+        user: PropTypes.object
     };
 
     render() {
         return (
-            <Provider store={Store}>
+            <Provider store={store}>
                 <Router>
                 <span>
                     <span id="react-header">
-                        <Navbar details={this.state.user}/>
+                        <Navbar/>
                     </span>
                     <div id="page-container">
                         {alert.message &&
                             <div className={`alert ${alert.type}`}>{alert.message}</div>
                         }
                             <Switch>
-                                <Route path='/' exact component={Products} />
-                                <Route path='/login' component={Login} />
-                                {/* <Redirect from="*" to="/" /> */}
+                                <Route path='/' exact component={ProductList} />
+                                <Route path='/show/:id' component={ProductDetails} />
+                                <Route path='/login' component={Login} />       
+                                <Route path="/*" render={() => (<Redirect to="/" />)} /> 
                             </Switch>
                     </div>
                 </span>
@@ -58,4 +51,11 @@ export default class App extends React.Component
     }
 }
 
-ReactDOM.render(<App/>, document.getElementById("root"));
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
+  });
+  
+  export default connect( mapStateToProps)(App);
+
+  ReactDOM.render(<App/>, document.getElementById("root"));

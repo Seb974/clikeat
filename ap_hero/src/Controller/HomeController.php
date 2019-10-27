@@ -19,14 +19,10 @@ use App\Service\Cart\CartService;
 use App\Repository\VariantRepository;
 use App\Repository\ProductRepository;
 use App\Entity\Product;
+use App\Service\Serializer\SerializerService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 
 
 
@@ -73,13 +69,8 @@ class HomeController extends AbstractController
     /**
      * @Route("/api_index", name="index_api")
      */
-    public function indexApi( ProductRepository $productRepository, Request $request , CartService $cartService)
+    public function indexApi( ProductRepository $productRepository, Request $request , CartService $cartService, SerializerService $serializer)
     {
-        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-        $normalizer = new ObjectNormalizer($classMetadataFactory);
-        $encoder = new JsonEncoder();
-        $serializer = new Serializer([$normalizer], [$encoder]);
-
         $user = $this->getUser();
         if ($user) {
             if ($user->getCart() && empty($cartService->getCart())) {
@@ -94,12 +85,7 @@ class HomeController extends AbstractController
 		}
 
         $products = $productRepository->findAll();
-
-        $data = $serializer->normalize($products, null, ['groups' => 'product']);
-        
-        //return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
-        return $this->json($data);
-        //echo $jsonObject;
+        return JsonResponse::fromJsonString($serializer->serializeEntity($products, 'product'));
     }
 
 
