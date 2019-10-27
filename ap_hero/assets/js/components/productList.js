@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getProducts } from '../actions/productActions';
 import { addItem } from '../actions/itemActions';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 class ProductList extends React.Component 
@@ -11,7 +12,7 @@ class ProductList extends React.Component
         addItem: PropTypes.func.isRequired,
         product: PropTypes.object.isRequired,
         isAuthenticated: PropTypes.bool
-      };
+    };
     
     componentDidMount() {
         this.props.getProducts();
@@ -55,22 +56,22 @@ class ProductList extends React.Component
             <div className="col-12 col-sm-6 col-md-4 react-product">
                 <div className="card card-lg">
                     <div className="card-img">
-                        <a href="{{ path('product_show', { id: product.id }) }}">
+                        <Link to={ "/show/" + props.details.id }>
                             { 
                                 (props.details.picture !== null && props.details.picture !== "") ? <img src={ 'uploads/pictures/' + props.details.picture.b64 } className="card-img-top" alt={ props.details.picture.b64 }/> : ""
                             }
-                        </a>
+                        </Link>
                     </div>
                     <div className="card-block">
                         <ul>
                             <li key={props.details.id}>
-                                <a href="{{ path('product_show', { id: product.id }) }}">
+                                <Link to={ "/show/" + props.details.id }>
                                     { props.details.name }
                                     <br/>
                                     <i className="fas fa-truck"></i>
                                     { props.details.supplier.preparationPeriod }mn @
                                     { props.details.supplier.name }
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                         <ul>

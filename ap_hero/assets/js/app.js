@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom
 import { Provider } from 'react-redux';
 import Navbar from './components/navbar';
 import ProductList from './components/productList';
+import ProductDetails from './components/productDetails';
 import Login from './components/login';
 import store from './store';
 import { loadUser } from './actions/authActions';
@@ -38,7 +39,9 @@ class App extends React.Component
                         }
                             <Switch>
                                 <Route path='/' exact component={ProductList} />
-                                <Route path='/login' component={Login} />
+                                <Route path='/show/:id' component={ProductDetails} />
+                                <Route path='/login' component={Login} />       
+                                <Route path="/*" render={() => (<Redirect to="/" />)} /> 
                             </Switch>
                     </div>
                 </span>
