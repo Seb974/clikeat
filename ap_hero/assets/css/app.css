@@ -3,8 +3,25 @@
 } */
 
 .product-wrapper
-        {
-            margin: 0.5em auto;
-            width: 100%;
-            font: 18px / 1.5 sans-serif;
-        }
+{
+    margin: 0.5em auto;
+    width: 100%;
+    font: 18px / 1.5 sans-serif;
+}
+
+.sidebar
+{
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+}
+
+#page-container
+{
+    top: 3rem;
+}
+
+#header
+{
+    position:fixed;
+    top: 0;
+}
