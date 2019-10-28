@@ -22,9 +22,9 @@ use App\Entity\Product;
 use App\Service\Serializer\SerializerService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-
-
+use Symfony\Component\Mercure\Publisher;
+use Symfony\Component\Mercure\Update;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * This controller is about homepage
@@ -63,9 +63,6 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-
-
     /**
      * @Route("/api_index", name="index_api")
      */
@@ -86,6 +83,22 @@ class HomeController extends AbstractController
 
         $products = $productRepository->findAll();
         return JsonResponse::fromJsonString($serializer->serializeEntity($products, 'product'));
+    }
+
+    /**
+     * @Route("/api/ping", name="ping", methods={"POST"})
+     */
+    // public function ping(Publisher $publisher, Request $request)
+    public function ping(MessageBusInterface $bus, Request $request, SerializerService $serializer, VariantRepository $variantRepository)
+    {
+        dd($request);
+        $article = $variantRepository->find($request->request->get("id"));
+        $quantity = $request->request->get("quantity");
+        $response = $serializer->serializeEntity($article, 'product');
+        $update = new Update("pong/ping", $response);
+        // $publisher($update);
+        $bus->dispatch($update);
+        return  JsonResponse::fromJsonString($response);
     }
 
 

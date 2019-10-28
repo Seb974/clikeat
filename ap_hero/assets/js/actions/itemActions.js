@@ -40,8 +40,15 @@ export const addItem = item => (dispatch, getState) => {
         variant: item.variant,
         quantity: item.quantity,
       }
-    })
+    });
+    axios.post('/api/ping', JSON.stringify({ id: item.variant.id, quantity: item.quantity }))     //, { headers: { 'Content-Type': 'application/json' } })
+         .catch(err => {
+          dispatch(
+            returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')       
+          )
+          });
 };
+
 
 export const deleteItem = item => (dispatch, getState) => {
   dispatch({
