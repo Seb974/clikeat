@@ -10,7 +10,12 @@ use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AllergenRepository")
- * @ApiResource
+ * @ApiResource(subresourceOperations={
+ *     "api_products_allergen_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Allergen
 {

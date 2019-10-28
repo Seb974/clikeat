@@ -9,7 +9,12 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VariantRepository")
- * @ApiResource
+ * @ApiResource(subresourceOperations={
+ *     "api_products_variant_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Variant
 {
@@ -44,7 +49,7 @@ class Variant
      * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="variants", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"variant"})
-     * @ApiSubresource
+     * 
      */
     private $product;
 

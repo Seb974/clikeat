@@ -11,8 +11,23 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
- * @ApiResource
+ * @ApiResource(attributes={
+ *   "normalization_context"={"groups"={"product"}}
+ * })
  */
+
+
+ /*
+ * @ApiResource(subresourceOperations={
+ *     "api_questions_answer_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"foobar"}}
+ *     }
+ * })
+ */
+
+
+
 class Product
 {
     /**
@@ -73,6 +88,7 @@ class Product
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Variant", mappedBy="product", orphanRemoval=true, cascade={"persist"})
      * @Groups({"product", "category", "allergen", "supplier"})
+     * @ApiSubresource
      */
     private $variants;
 

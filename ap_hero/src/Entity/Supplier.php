@@ -11,7 +11,12 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SupplierRepository")
- * @ApiResource
+ * @ApiResource(subresourceOperations={
+ *     "api_products_supplier_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Supplier
 {

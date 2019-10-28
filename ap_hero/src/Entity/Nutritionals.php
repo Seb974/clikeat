@@ -8,7 +8,12 @@ use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\NutritionalsRepository")
- * @ApiResource
+ * @ApiResource(subresourceOperations={
+ *     "api_products_nutritionals_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Nutritionals
 {

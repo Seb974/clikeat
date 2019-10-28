@@ -15,11 +15,13 @@ export const getProducts = () => dispatch => {
   } else {
     dispatch(setProductsLoading());
     axios
-      .get('/api_index')
+      // .get('/api_index')
+      .get('api/products')
       .then((res) => {
           dispatch({
             type: GET_PRODUCTS,
-            payload: res.data
+            payload: res.data['hydra:member']
+            // payload: res.data
           })
       }
       )
@@ -45,10 +47,13 @@ export const getProduct = id => dispatch => {
   } else {
     dispatch(setProductsLoading());
     axios
-      .get('/product/api/' + id)
+      // .get('/product/api/' + id)
+      .get('/api/products/' + id)
       .then((res) => {
+        console.log(res.data);
         dispatch({
           type: GET_PRODUCT,
+          // payload: res.data
           payload: res.data
         })
       })
