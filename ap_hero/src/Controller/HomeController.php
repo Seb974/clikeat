@@ -85,21 +85,7 @@ class HomeController extends AbstractController
         return JsonResponse::fromJsonString($serializer->serializeEntity($products, 'product'));
     }
 
-    /**
-     * @Route("/api/ping", name="ping", methods={"POST"})
-     */
-    // public function ping(Publisher $publisher, Request $request)
-    public function ping(MessageBusInterface $bus, Request $request, SerializerService $serializer, VariantRepository $variantRepository)
-    {
-        dd($request);
-        $article = $variantRepository->find($request->request->get("id"));
-        $quantity = $request->request->get("quantity");
-        $response = $serializer->serializeEntity($article, 'product');
-        $update = new Update("pong/ping", $response);
-        // $publisher($update);
-        $bus->dispatch($update);
-        return  JsonResponse::fromJsonString($response);
-    }
+    
 
 
 }

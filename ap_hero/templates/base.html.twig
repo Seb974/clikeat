@@ -91,7 +91,7 @@
         const eventSource = new EventSource(url);
         eventSource.onmessage = event => {
             console.log(JSON.parse(event.data));
-            document.getElementById('content-wrap').insertAdjacentHTML('afterbegin', '<div class="alert alert-success"><strong>Mise a jour des stocks</strong></div>')
+            document.getElementById('content-wrap').insertAdjacentHTML('afterbegin', '<div class="alert alert-success"><strong>Mise a jour du stock de ' + event.data. + '</strong></div>')
             window.setTimeout(() => {
                 const $alert = document.querySelector('.alert');
                 $alert.parentNode.removeChild($alert);
