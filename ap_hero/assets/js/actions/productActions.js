@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_PRODUCTS, ADD_PRODUCT, DELETE_PRODUCT, PRODUCTS_LOADING, GET_PRODUCT } from './types';
+import { GET_PRODUCTS, PRODUCTS_LOADING, GET_PRODUCT } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 import productReducer from '../reducers/productReducer';
@@ -16,14 +16,11 @@ export const getProducts = () => dispatch => {
   } else {
     dispatch(setProductsLoading());
     axios
-      // .get('/api_index')
       .get('api/products')
       .then((res) => {
-          console.log(res.data);
           dispatch({
             type: GET_PRODUCTS,
             payload: res.data['hydra:member']
-            // payload: res.data
           })
       }
       )
@@ -70,3 +67,14 @@ export const setProductsLoading = () => {
     type: PRODUCTS_LOADING
   };
 };
+
+export const updateProductStock = variant => dispatch => {
+    console.log(variant);
+    dispatch({
+      type: UPDATE_PRODUCT_STOCK,
+      payload: {
+        variant: variant,
+      }
+    })
+
+}

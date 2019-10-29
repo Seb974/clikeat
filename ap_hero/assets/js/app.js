@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
+import { UPDATE_PRODUCT_STOCK } from './actions/types';
 import { Provider } from 'react-redux';
 import Navbar from './components/navbar';
 import ProductList from './components/productList';
@@ -22,7 +23,8 @@ class App extends React.Component
 
     static propTypes = {
         isAuthenticated: PropTypes.bool,
-        user: PropTypes.object
+        user: PropTypes.object,
+        updateProductStock: PropTypes.func,
     };
 
     componentDidMount = () => {
@@ -31,19 +33,13 @@ class App extends React.Component
 
         const eventSource = new EventSource(url);
         eventSource.onmessage = event => {
-            this.updateProduct(event);
-            // const data = JSON.parse(event.data);
-            // document.getElementById('content-wrap').insertAdjacentHTML('afterbegin', '<div class="alert alert-success"><strong>Mise a jour du stock de ' + data.product.name + ' ' + data.name + '</strong></div>')
-            // window.setTimeout(() => {
-            //     const $alert = document.querySelector('.alert');
-            //     $alert.parentNode.removeChild($alert);
-            // }, 2000);
+            store.dispatch({
+                type: UPDATE_PRODUCT_STOCK,
+                payload: {
+                    variant: JSON.parse(event.data),
+                }
+              })
         }
-    }
-
-    updateProduct = (event) => {
-        const data = JSON.parse(event.data);
-        alert("Mise à jour du produit " + data.product.name + " " + data.name);
     }
 
     render() {
