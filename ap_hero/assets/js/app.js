@@ -33,6 +33,7 @@ class App extends React.Component
 
         const eventSource = new EventSource(url);
         eventSource.onmessage = event => {
+            event.preventDefault();
             store.dispatch({
                 type: UPDATE_PRODUCT_STOCK,
                 payload: {
