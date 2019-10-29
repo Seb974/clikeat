@@ -79,26 +79,25 @@
      <script src="{{ asset('build/js/cart.js') }}" type="text/javascript"></script>
      <script src="{{ asset('build/js/navbar.js') }}" type="text/javascript"></script> -->#}
 
-     <script>
-        // URL is a built-in JavaScript class to manipulate URLs
-        const url = new URL('http://localhost:3000/hub');
-        // url.searchParams.append('topic', 'http://example.com/books/1');
-        // // Subscribe to updates of several Book resources
-        // url.searchParams.append('topic', 'http://example.com/books/2');
-        // // All Review resources will match this pattern
-        url.searchParams.append('topic', 'pong/ping');
+    {#<!--  <script>
+    //     // URL is a built-in JavaScript class to manipulate URLs
+    //     const url = new URL('http://localhost:3000/hub');
+    //     // url.searchParams.append('topic', 'http://example.com/books/1');
+    //     // // Subscribe to updates of several Book resources
+    //     // url.searchParams.append('topic', 'http://example.com/books/2');
+    //     // // All Review resources will match this pattern
+    //     url.searchParams.append('topic', 'pong/ping');
 
-        const eventSource = new EventSource(url);
-        eventSource.onmessage = event => {
-            console.log(JSON.parse(event.data));
-            document.getElementById('content-wrap').insertAdjacentHTML('afterbegin', '<div class="alert alert-success"><strong>Mise a jour du stock de ' + event.data. + '</strong></div>')
-            window.setTimeout(() => {
-                const $alert = document.querySelector('.alert');
-                $alert.parentNode.removeChild($alert);
-
-            }, 2000);
-        }
-     </script>
+    //     const eventSource = new EventSource(url);
+    //     eventSource.onmessage = event => {
+    //         const data = JSON.parse(event.data);
+    //         document.getElementById('content-wrap').insertAdjacentHTML('afterbegin', '<div class="alert alert-success"><strong>Mise a jour du stock de ' + data.product.name + ' ' + data.name + '</strong></div>')
+    //         window.setTimeout(() => {
+    //             const $alert = document.querySelector('.alert');
+    //             $alert.parentNode.removeChild($alert);
+    //         }, 2000);
+    //     }
+    //  </script> -->#}
 
     <!-- Custom JS -->
         {% if block("js") is defined %}

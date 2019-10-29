@@ -9,25 +9,24 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 
+// attributes={
+//  *          "normalization_context"={"groups"={"product", "variant"}}
+//  *     },
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
- * @ApiResource(attributes={
- *   "normalization_context"={"groups"={"product"}}
- * })
- */
-
-
- /*
- * @ApiResource(subresourceOperations={
- *     "api_questions_answer_get_subresource"={
- *         "method"="GET",
- *         "normalization_context"={"groups"={"foobar"}}
+ * @ApiResource(
+ *     attributes={
+ *          "normalization_context"={"groups"={"product"}}
+ *     },
+ *     subresourceOperations={
+ *          "api_variants_product_get_subresource"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"variant"}}
+ *          }
  *     }
- * })
+ * )
  */
-
-
-
 class Product
 {
     /**

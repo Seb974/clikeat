@@ -25,6 +25,27 @@ class App extends React.Component
         user: PropTypes.object
     };
 
+    componentDidMount = () => {
+        const url = new URL('http://localhost:3000/hub');
+        url.searchParams.append('topic', 'pong/ping');
+
+        const eventSource = new EventSource(url);
+        eventSource.onmessage = event => {
+            this.updateProduct(event);
+            // const data = JSON.parse(event.data);
+            // document.getElementById('content-wrap').insertAdjacentHTML('afterbegin', '<div class="alert alert-success"><strong>Mise a jour du stock de ' + data.product.name + ' ' + data.name + '</strong></div>')
+            // window.setTimeout(() => {
+            //     const $alert = document.querySelector('.alert');
+            //     $alert.parentNode.removeChild($alert);
+            // }, 2000);
+        }
+    }
+
+    updateProduct = (event) => {
+        const data = JSON.parse(event.data);
+        alert("Mise à jour du produit " + data.product.name + " " + data.name);
+    }
+
     render() {
         return (
             <Provider store={store}>

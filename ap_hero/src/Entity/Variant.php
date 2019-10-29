@@ -7,14 +7,21 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 
+// "normalization_context"={"groups"={"product"}}
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VariantRepository")
- * @ApiResource(subresourceOperations={
- *     "api_products_variant_get_subresource"={
- *         "method"="GET",
- *         "normalization_context"={"groups"={"product"}}
- *     }
- * })
+ * @ApiResource(
+ *      attributes={
+ *          "normalization_context"={"groups"={"variant"}}
+ *      },
+ *      subresourceOperations={
+ *          "api_products_variant_get_subresource"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"product"}}
+ *          }
+ *      }
+ * )
  */
 class Variant
 {

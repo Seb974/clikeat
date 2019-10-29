@@ -5,6 +5,7 @@ import { returnErrors } from './errorActions';
 import productReducer from '../reducers/productReducer';
 
 export const getProducts = () => dispatch => {
+  localStorage.removeItem('products');
   let storedProducts = localStorage.getItem('products') || "";
   if (storedProducts !== "") {
     storedProducts = JSON.parse(storedProducts);
@@ -18,6 +19,7 @@ export const getProducts = () => dispatch => {
       // .get('/api_index')
       .get('api/products')
       .then((res) => {
+          console.log(res.data);
           dispatch({
             type: GET_PRODUCTS,
             payload: res.data['hydra:member']

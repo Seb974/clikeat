@@ -25,7 +25,7 @@ export const getItems = () => dispatch => {
 
 export const addItem = item => (dispatch, getState) => {
   const config = { headers: { 'Content-Type': 'application/json' } };
-  const body = JSON.stringify( { id: item.variant.id, quantity: item.quantity } )
+  const body = JSON.stringify( { action: DECREASE_PRODUCT_STOCK, id: item.variant.id, quantity: item.quantity } )
     dispatch({
         type: ADD_ITEM,
         payload: {
@@ -44,7 +44,6 @@ export const addItem = item => (dispatch, getState) => {
       }
     });
     axios.post('/app/ping', body, config)
-         .then(res => console.log(res))
          .catch(err => {
           dispatch(
             returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')       
