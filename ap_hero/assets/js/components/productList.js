@@ -58,7 +58,7 @@ class ProductList extends React.Component
                     <div className="card-img">
                         <Link to={ "/show/" + props.details.id }>
                             { 
-                                (props.details.picture !== null && props.details.picture !== "") ? <img src={ 'uploads/pictures/' + props.details.picture.b64 } className="card-img-top" alt={ props.details.picture.b64 }/> : ""
+                                (props.details.picture !== null && props.details.picture !== "" && typeof props.details.picture !== 'undefined') ? <img src={ 'uploads/pictures/' + props.details.picture.b64 } className="card-img-top" alt={ props.details.picture.b64 }/> : ""
                             }
                         </Link>
                     </div>
@@ -68,8 +68,8 @@ class ProductList extends React.Component
                                 <Link to={ "/show/" + props.details.id }>
                                     { props.details.name }
                                     <br/>
-                                    <i className="fas fa-truck"></i>
-                                    { props.details.supplier.preparationPeriod }mn @
+                                    <i className="fas fa-truck"></i> {" "}
+                                    { new Date(props.details.supplier.preparationPeriod).getMinutes() }mn @
                                     { props.details.supplier.name }
                                 </Link>
                             </li>

@@ -1,4 +1,4 @@
-import { GET_PRODUCTS, GET_PRODUCT, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STOCK } from '../actions/types';
+import { GET_PRODUCTS, GET_PRODUCT, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STOCK, UPDATE_PRODUCT_STOCK } from '../actions/types';
   
   const initialState = {
     products: [],
@@ -21,6 +21,48 @@ import { GET_PRODUCTS, GET_PRODUCT, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STO
             ...state,
             selected: action.payload
           };
+      case UPDATE_PRODUCT_STOCK:
+          let p = -1;
+          let s = -1;
+          let v = -1;
+          for (let i = 0; i < state.products.length; i++) {
+            if (state.products[i].id === action.payload.variant.product.id) {
+              p = i;
+            }
+            if (Object.keys(state.selected).length > 0) {
+              if (state.products[i].id === state.selected.id) {
+                s = i;
+              }
+            }
+          }
+          for (let i = 0; i < state.products[p].variants.length; i++) {
+            if (state.products[p].variants[i].id === action.payload.variant.id) {
+              v = i;
+            }
+          }
+          let newSelectedState = state.selected;
+          let newProductsState = state.products;
+          if (v !== -1) {
+            let newVariants = [];
+            for (let i = 0; i < state.products[p].variants.length; i++) {
+                newVariants[i] = state.products[p].variants[i];
+                if (i === v) {
+                  newVariants[i] = action.payload.variant;
+                }
+            }
+            newSelectedState = (s === p) ? {...state.selected, variants: newVariants} : state.selected;
+            newProductsState = state.products.map(
+                (product, index) => {
+                  return index === p ? {...product, variants: newVariants} : product;
+                }
+              );
+              localStorage.setItem('products', JSON.stringify(newProductsState));
+          }
+          return {
+            ...state,
+            products: newProductsState,
+            selected: newSelectedState
+          }
       case DECREASE_PRODUCT_STOCK:
       case INCREASE_PRODUCT_STOCK:
           let pIndex = 0;

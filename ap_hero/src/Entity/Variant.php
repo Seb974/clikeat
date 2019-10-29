@@ -4,9 +4,24 @@ namespace App\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+
+// "normalization_context"={"groups"={"product"}}
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VariantRepository")
+ * @ApiResource(
+ *      attributes={
+ *          "normalization_context"={"groups"={"variant"}}
+ *      },
+ *      subresourceOperations={
+ *          "api_products_variant_get_subresource"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"product"}}
+ *          }
+ *      }
+ * )
  */
 class Variant
 {
@@ -33,6 +48,7 @@ class Variant
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Stock", mappedBy="product", cascade={"persist", "remove"})
      * @Groups({"product", "variant"})
+     * @ApiSubresource
      */
     private $stock;
 
@@ -40,12 +56,14 @@ class Variant
      * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="variants", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"variant"})
+     * 
      */
     private $product;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Tva")
      * @Groups({"product", "variant"})
+     * @ApiSubresource
      */
     private $tva;
 

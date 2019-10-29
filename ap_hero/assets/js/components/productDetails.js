@@ -54,7 +54,7 @@ class ProductDetails extends React.Component
                             <i className="fas fa-dolly"></i> 
                             {" "} {props.details.stock.quantity} {" "}
                             {props.details.stock.quantity <= 0 ? <span>En rupture de stock !</span> : 
-                                (<button className="btn btn-primary btn-sm" onClick={() => this.handleClick(props.product, props.details)} id={props.details.id}>
+                                (<button className="btn btn-primary btn-sm" onClick={() => this.handleClick(product, props.details)} id={props.details.id}>
                                     <i className="fas fa-shopping-cart"></i>
                                     {props.details.name}  à {props.details.price}€
                                 </button>)

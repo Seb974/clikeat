@@ -24,6 +24,16 @@ export const getItems = () => dispatch => {
 };
 
 export const addItem = item => (dispatch, getState) => {
+  //REMPLACE POUR TEMPS REEL MERCURE PAR :
+  const config = { headers: { 'Content-Type': 'application/json' } };
+  const body = JSON.stringify( { action: DECREASE_PRODUCT_STOCK, id: item.variant.id, quantity: item.quantity } )
+  axios.post('/app/ping', body, config)
+       .catch(err => {
+        dispatch(
+          returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')       
+        )
+        });
+  // FIN SUPPLEMENT MERCURE
     dispatch({
         type: ADD_ITEM,
         payload: {
@@ -33,6 +43,7 @@ export const addItem = item => (dispatch, getState) => {
             parent: item.product,
         },
     });
+
     dispatch({
       type: DECREASE_PRODUCT_STOCK,
       payload: {
@@ -40,14 +51,25 @@ export const addItem = item => (dispatch, getState) => {
         variant: item.variant,
         quantity: item.quantity,
       }
-    })
+    });
 };
 
 export const deleteItem = item => (dispatch, getState) => {
+  //REMPLACE POUR TEMPS REEL MERCURE PAR :
+  const config = { headers: { 'Content-Type': 'application/json' } };
+  const body = JSON.stringify( { action: INCREASE_PRODUCT_STOCK, id: item.product.id, quantity: item.quantity } )
+  axios.post('/app/ping', body, config)
+         .catch(err => {
+          dispatch(
+            returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')       
+          )
+          });
+  // FIN SUPPLEMENT MERCURE
   dispatch({
     type: DELETE_ITEM,
     payload: item
   });
+
   dispatch({
     type: INCREASE_PRODUCT_STOCK,
     payload: {
@@ -56,8 +78,15 @@ export const deleteItem = item => (dispatch, getState) => {
       quantity: item.quantity,
     }
   })
+};
 
-  // axios
+export const setItemsLoading = () => {
+  return {
+    type: ITEMS_LOADING
+  };
+};
+
+// axios
   //   .delete(`/api/items/${id}`, tokenConfig(getState))
   //   .then(res =>
   //     dispatch({
@@ -68,10 +97,3 @@ export const deleteItem = item => (dispatch, getState) => {
   //   .catch(err =>
   //     dispatch(returnErrors(err.response.data, err.response.status))
   //   );
-};
-
-export const setItemsLoading = () => {
-  return {
-    type: ITEMS_LOADING
-  };
-};

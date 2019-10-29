@@ -23,18 +23,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
 {
-    /**
+    /*
      * index
      * @Route("/api", name="api")
      *
      * @return void
      */
-    public function index()
-    {
-        return $this->render('api/index.html.twig', [
-            'controller_name' => 'ApiController',
-        ]);
-	}
+    // public function index()
+    // {
+    //     return $this->render('api/index.html.twig', [
+    //         'controller_name' => 'ApiController',
+    //     ]);
+	// }
 
 	/**
      * callback

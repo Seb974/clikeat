@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
+import { UPDATE_PRODUCT_STOCK } from './actions/types';
 import { Provider } from 'react-redux';
 import Navbar from './components/navbar';
 import ProductList from './components/productList';
@@ -22,8 +23,25 @@ class App extends React.Component
 
     static propTypes = {
         isAuthenticated: PropTypes.bool,
-        user: PropTypes.object
+        user: PropTypes.object,
+        updateProductStock: PropTypes.func,
     };
+
+    componentDidMount = () => {
+        const url = new URL('http://localhost:3000/hub');
+        url.searchParams.append('topic', 'pong/ping');
+
+        const eventSource = new EventSource(url);
+        eventSource.onmessage = event => {
+            event.preventDefault();
+            store.dispatch({
+                type: UPDATE_PRODUCT_STOCK,
+                payload: {
+                    variant: JSON.parse(event.data),
+                }
+              })
+        }
+    }
 
     render() {
         return (

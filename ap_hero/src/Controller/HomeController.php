@@ -22,9 +22,9 @@ use App\Entity\Product;
 use App\Service\Serializer\SerializerService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-
-
+use Symfony\Component\Mercure\Publisher;
+use Symfony\Component\Mercure\Update;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * This controller is about homepage
@@ -63,9 +63,6 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-
-
     /**
      * @Route("/api_index", name="index_api")
      */
@@ -87,6 +84,8 @@ class HomeController extends AbstractController
         $products = $productRepository->findAll();
         return JsonResponse::fromJsonString($serializer->serializeEntity($products, 'product'));
     }
+
+    
 
 
 }

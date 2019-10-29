@@ -6,9 +6,26 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+
+// attributes={
+//  *          "normalization_context"={"groups"={"product", "variant"}}
+//  *     },
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
+ * @ApiResource(
+ *     attributes={
+ *          "normalization_context"={"groups"={"product"}}
+ *     },
+ *     subresourceOperations={
+ *          "api_variants_product_get_subresource"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"variant"}}
+ *          }
+ *     }
+ * )
  */
 class Product
 {
@@ -35,24 +52,27 @@ class Product
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Pics", cascade={"persist", "remove"})
      * @Groups({"product", "category", "allergen", "supplier", "variant"})
+     * @ApiSubresource
      */
     private $picture;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Nutritionals", cascade={"persist", "remove"})
      * @Groups({"product", "category", "allergen", "supplier", "variant"})
+     * @ApiSubresource
      */
     private $nutritionals;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="products")
      * @Groups({"product", "allergen", "supplier", "variant"})
+     * @ApiSubresource
      */
     private $category;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Tva")
-     * 
+     * @ApiSubresource
      */
     // @Groups({"product", "category", "allergen", "supplier", "variant"})
     private $tva;
@@ -60,18 +80,21 @@ class Product
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Allergen", inversedBy="products")
      * @Groups({"product", "category", "supplier", "variant"})
+     * @ApiSubresource
      */
     private $allergens;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Variant", mappedBy="product", orphanRemoval=true, cascade={"persist"})
      * @Groups({"product", "category", "allergen", "supplier"})
+     * @ApiSubresource
      */
     private $variants;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Supplier", inversedBy="products")
      * @Groups({"product", "category", "allergen", "variant"})
+     * @ApiSubresource
      */
     private $supplier;
 

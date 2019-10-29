@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OrderRepository")
+ * @ApiResource
  */
 class Orders
 {
@@ -31,6 +34,7 @@ class Orders
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
+     * @ApiSubresource
      */
     private $user;
 
@@ -57,6 +61,7 @@ class Orders
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\CartItem", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @ApiSubresource
      */
     private $cartItem;
 
@@ -73,6 +78,7 @@ class Orders
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Supplier")
      * @ORM\JoinColumn(nullable=false)
+     * @ApiSubresource
      */
     private $supplier;
 
