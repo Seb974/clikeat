@@ -56,6 +56,7 @@ import {
         };
 
       case UPDATE_ITEM:
+          localStorage.setItem('cart', JSON.stringify(state.items));
           return {
             ...state,
             totalToPayTTC: getTotalTTC(state.items),

@@ -30,3 +30,14 @@
 {
     margin-top: 50px;
 }
+
+.badge-cart-void 
+{
+    background-color: #B5067F;
+    color: #FFD80A;
+}
+
+.post .post-thumbnail .badge
+{
+    position: static;
+}

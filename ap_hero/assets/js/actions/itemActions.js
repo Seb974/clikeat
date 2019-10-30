@@ -30,7 +30,7 @@ export const addItem = item => (dispatch, getState) => {
   axios.post('/app/ping', body, config)
        .catch(err => {
         dispatch(
-          returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')       
+          returnErrors(err.response.data, err.response.status, 'UPDATE_STOCK_FAIL')       
         )
         });
   // FIN SUPPLEMENT MERCURE
@@ -61,7 +61,7 @@ export const deleteItem = item => (dispatch, getState) => {
   axios.post('/app/ping', body, config)
          .catch(err => {
           dispatch(
-            returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')       
+            returnErrors(err.response.data, err.response.status, 'UPDATE_STOCK_FAIL')       
           )
           });
   // FIN SUPPLEMENT MERCURE
@@ -82,7 +82,18 @@ export const deleteItem = item => (dispatch, getState) => {
 
 
 
-export const updateItem = item => (dispatch, getState) => {
+export const updateItem = (item, qty) => (dispatch, getState) => {
+  const action = (qty > 0) ? DECREASE_PRODUCT_STOCK : INCREASE_PRODUCT_STOCK;
+  //REMPLACE POUR TEMPS REEL MERCURE PAR :
+  const config = { headers: { 'Content-Type': 'application/json' } };
+  const body = JSON.stringify( { action: action, id: item.product.id, quantity: Math.abs(qty) } )
+  axios.post('/app/ping', body, config)
+         .catch(err => {
+          dispatch(
+            returnErrors(err.response.data, err.response.status, 'UPDATE_STOCK_FAIL')       
+          )
+          });
+  // FIN SUPPLEMENT MERCURE
   dispatch({
     type: UPDATE_ITEM,
     payload: item
