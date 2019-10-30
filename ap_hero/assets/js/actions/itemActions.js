@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_ITEMS, ADD_ITEM, DELETE_ITEM, ITEMS_LOADING, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STOCK } from './types';
+import { GET_ITEMS, ADD_ITEM, UPDATE_ITEM, DELETE_ITEM, ITEMS_LOADING, INCREASE_PRODUCT_STOCK, DECREASE_PRODUCT_STOCK } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 import userExtractor from '../helpers/userExtractor';
@@ -79,6 +79,18 @@ export const deleteItem = item => (dispatch, getState) => {
     }
   })
 };
+
+
+
+export const updateItem = item => (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_ITEM,
+    payload: item
+  });
+}
+
+
+
 
 export const setItemsLoading = () => {
   return {

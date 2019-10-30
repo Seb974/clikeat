@@ -4,15 +4,15 @@ import {
     GET_ITEMS,
     ADD_ITEM,
     DELETE_ITEM,
+    UPDATE_ITEM,
     ITEMS_LOADING
   } from '../actions/types';
   
-  //const storedCart = localStorage.getItem('cart') || [];
   const initialState = {
     items: [],
-    totalToPayTTC: 0,   //getTotalTTC(storedCart),
-    totalToPayHT: 0,    //getTotalHT(storedCart),
-    totalTax: 0,        //getTotalTax(storedCart),
+    totalToPayTTC: 0,
+    totalToPayHT: 0,
+    totalTax: 0,
     loading: false
   };
   
@@ -32,10 +32,10 @@ import {
         localStorage.setItem('cart', JSON.stringify(reducedCart));
         return {
           ...state,
-          items: reducedCart,                            //state.items.filter(item => item !== action.payload),
-          totalToPayTTC: getTotalTTC(reducedCart),       //getTotalTTC(state.items.filter(item => item !== action.payload)),
-          totalTax: getTotalTax(reducedCart),            //getTotalTax(state.items.filter(item => item !== action.payload)),
-          totalToPayHT: getTotalHT(reducedCart)          //getTotalHT(state.items.filter(item => item !== action.payload)),
+          items: reducedCart,
+          totalToPayTTC: getTotalTTC(reducedCart),
+          totalTax: getTotalTax(reducedCart),
+          totalToPayHT: getTotalHT(reducedCart)
         };
       case ADD_ITEM:
         state.items.forEach(element => {
@@ -45,19 +45,24 @@ import {
             return state;
           }
         })
-        // ATTENTION : Vérifier Impact
         const enlargedCart = action.payload.quantity !== 0 ? [action.payload, ...state.items] : state.items;
-        // FIN de modification susceptible de perturber le bon fonctionnement
-
-          //action.payload.quantity !== 0 ? localStorage.setItem('cart', JSON.stringify([action.payload, ...state.items])) : localStorage.setItem('cart', JSON.stringify(state.items));
         localStorage.setItem('cart', JSON.stringify(enlargedCart));
         return {
           ...state,
-          items: enlargedCart,                            //(action.payload.quantity == 0) ? state.items :[action.payload, ...state.items],
-          totalToPayTTC: getTotalTTC(enlargedCart),       //getTotalTTC([action.payload, ...state.items]),
-          totalTax: getTotalTax(enlargedCart),            //getTotalTax([action.payload, ...state.items]),
-          totalToPayHT: getTotalHT(enlargedCart)          //getTotalHT([action.payload, ...state.items]),
+          items: enlargedCart,
+          totalToPayTTC: getTotalTTC(enlargedCart),
+          totalTax: getTotalTax(enlargedCart),
+          totalToPayHT: getTotalHT(enlargedCart)
         };
+
+      case UPDATE_ITEM:
+          return {
+            ...state,
+            totalToPayTTC: getTotalTTC(state.items),
+            totalTax: getTotalTax(state.items),
+            totalToPayHT: getTotalHT(state.items)
+          };
+
       case ITEMS_LOADING:
         return {
           ...state,

@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import Navbar from './components/navbar';
 import ProductList from './components/productList';
 import ProductDetails from './components/productDetails';
+import CartList from './components/CartList';
 import Login from './components/login';
 import store from './store';
 import { loadUser } from './actions/authActions';
@@ -58,8 +59,9 @@ class App extends React.Component
                             <Switch>
                                 <Route path='/' exact component={ProductList} />
                                 <Route path='/show/:id' component={ProductDetails} />
-                                <Route path='/login' component={Login} />       
-                                <Route path="/*" render={() => (<Redirect to="/" />)} /> 
+                                <Route path='/login' component={Login} />
+                                <Route path='/cart' component={CartList} />
+                                <Route path="*" render={() => (<Redirect to="/" />)} /> 
                             </Switch>
                     </div>
                 </span>
