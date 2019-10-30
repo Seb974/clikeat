@@ -50,7 +50,7 @@ class ProductDetails extends React.Component
                 <span>
                     <hr/>
                     <ul className="d-flex flex-row-reverse">
-                        <li key={props.details.id}>
+                        <li key={"variant-item-" + props.details.id}>
                             <i className="fas fa-dolly"></i> 
                             {" "} {props.details.stock.quantity} {" "}
 
@@ -75,7 +75,7 @@ class ProductDetails extends React.Component
         if (product.variants) {
             return product.variants.map(variant => {
                 return (
-                    <span>
+                    <span key={"variant-span-" + variant.id} >
                         <hr/>
                         <Variant details={variant} product={product}/>
                     </span>

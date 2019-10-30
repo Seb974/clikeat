@@ -27,7 +27,7 @@ class ProductList extends React.Component
         let Variant = (props) => {
             return (
                 <span>
-                    <li key={props.details.id}>
+                    <li key={"variant-item-" + props.details.id}>
                         <i className="fas fa-dolly"></i> 
                         {" "} {props.details.stock.quantity} {" "}
                         {props.details.stock.quantity <= 0 ? <span>En rupture de stock !</span> : 
@@ -42,7 +42,7 @@ class ProductList extends React.Component
             }
         return product.variants.map(variant => {
             return (
-                <span>
+                <span key={"variant-span-" + variant.id}>
                     <hr/>
                     <Variant details={variant} product={product}/>
                 </span>
@@ -64,7 +64,7 @@ class ProductList extends React.Component
                     </div>
                     <div className="card-block">
                         <ul>
-                            <li key={props.details.id}>
+                            <li key={"product-item-" + props.details.id}>
                                 <Link to={ "/show/" + props.details.id }>
                                     { props.details.name }
                                     <br/>
@@ -83,7 +83,7 @@ class ProductList extends React.Component
           );
         }
         return this.props.product.products.map(product => {
-            return <Product details={product} />
+            return <Product key={"product-" + product.id} details={product} />
         });
     }
 
