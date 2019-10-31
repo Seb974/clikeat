@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getItems, addItem, deleteItem, updateItem } from '../actions/itemActions';
 import { getProduct } from '../actions/productActions';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
 class CartList extends React.Component 
 {
     state = {
@@ -21,9 +21,7 @@ class CartList extends React.Component
       };
     
     componentDidMount() {
-        
         this.props.getItems();
-
       }
     
     onDeleteClick = item => {
@@ -44,7 +42,7 @@ class CartList extends React.Component
               <span>
                   <hr/>
                   <ul className="d-flex flex-row-reverse">
-                   <li key={"cartitem-item-" + props.details.product.id} >    {/* className="d-flex flex-row ml-auto" */}
+                   <li key={"cartitem-item-" + props.details.product.id} className={"cartitem-item"}>    {/* className="d-flex flex-row ml-auto" */}
                    { props.variantInState.stock.quantity > 5 ? "" : 
                               props.variantInState.stock.quantity === 0 ?
                               (<p className="badge badge-cart-void">
@@ -58,7 +56,7 @@ class CartList extends React.Component
                       {/* <a href="#">
                           x{ props.details.quantity } { props.details.parent.name } { props.details.product.name } | { props.details.product.price * props.details.quantity }€
                       </a> */}
-                      <input type="number" value={props.details.quantity} onChange={(event) => this.handleUpdateQty(props.details, event)} min="1" max={props.details.product.stock.quantity}/>
+                      <input type="number" value={props.details.quantity} onChange={(event) => this.handleUpdateQty(props.details, event)} min="1" max={props.details.product.stock.quantity} />
                       <button className="btn btn-link" onClick={() => this.onDeleteClick(props.details)}><i className="fa fa-trash"></i></button> 
                       </li>
                   </ul>
@@ -101,7 +99,8 @@ class CartList extends React.Component
                             </div> 
                             
                             <div>
-                                <button className="btn btn-success btn-sm ml-auto" >Payer</button>
+                                {/* <button className="btn btn-success btn-sm ml-auto" >Payer</button> */}
+                                <Link to={ "/checkout" } className="btn btn-success btn-sm ml-auto">Payer</Link>
                             </div>
                         </div>
                     </div>

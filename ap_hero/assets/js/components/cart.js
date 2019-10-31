@@ -59,7 +59,8 @@ class Cart extends React.Component
                     <div className="d-flex px-3">
                         <Link to={ "/cart" } className="btn btn-outline btn-sm">Editer quantité</Link>
                         {/* <button className="btn btn-outline btn-sm" >Editer quantité</button> */}
-                        <button className="btn btn-success btn-sm ml-auto" >Payer</button>
+                        <Link to={ "/checkout" } className="btn btn-success btn-sm ml-auto">Payer</Link>
+                        {/* <button className="btn btn-success btn-sm ml-auto" >Payer</button> */}
                     </div>
                 </div>
             </span>
