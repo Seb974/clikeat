@@ -34,14 +34,16 @@ import {
         };
       case LOGIN_SUCCESS:
       case REGISTER_SUCCESS:
+        let user = userExtractor(action.payload.token);
+        // user.metadata = JSON.parse(user.metadata);
         localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', userExtractor(action.payload.token));
+        localStorage.setItem('user', user);
         return {
           ...state,
           ...action.payload,
           isAuthenticated: true,
           isLoading: false,
-          user: userExtractor(action.payload.token)
+          user: user
         };
       case LOGOUT_SUCCESS:
           localStorage.removeItem('token');

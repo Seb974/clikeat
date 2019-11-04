@@ -38,8 +38,7 @@ class Navbar extends Component {
                         </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-right">
-                        <a className="dropdown-item" href="{{ path('user_self_show') }}">
-                            <i className="fas fa-user"></i>Mon profil</a>
+                        <Link className="dropdown-item" to="/account">  <i className="fas fa-user"></i>Mon profil</Link>
                         <div className="dropdown-divider"></div>
                         { (props.user.roles.indexOf('ROLE_SUPPLIER') === -1 && props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
                             <span>

@@ -131,9 +131,6 @@ class Checkout extends Component {
 
     render() {
         const { user, isAuthenticated, item } = this.props;
-        console.log("isAuthenticated = " + isAuthenticated);
-        console.log("user : ");
-        console.log(user);
         return (
             <div className="container mt-3">
                 <div className="row">

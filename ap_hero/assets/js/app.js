@@ -10,6 +10,7 @@ import ProductDetails from './components/productDetails';
 import CartList from './components/cartList';
 import Checkout from './components/checkout';
 import Login from './components/login';
+import Profile from './components/profile';
 import store from './store';
 import { loadUser } from './actions/authActions';
 import { connect } from 'react-redux';
@@ -65,6 +66,7 @@ class App extends React.Component
                                     <Route path='/login' component={Login} />
                                     <Route path='/cart' component={CartList} />
                                     <Route path='/checkout' component={Checkout} />
+                                    <Route path='/account' component={Profile} />
                                     <Route path="*" render={() => (<Redirect to="/" />)} /> 
                                 </Switch>
                             </ScrollToTop>
