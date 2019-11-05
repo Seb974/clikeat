@@ -37,8 +37,6 @@ class Profile extends React.Component
     };
 
     componentDidMount = () => {
-        console.log(this.props.user);
-        console.log(this.state);
         if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode )
             this.setState( { identicalBillingAddress: true } );
         else 
@@ -58,39 +56,6 @@ class Profile extends React.Component
                     });
                 }
              });
-        // this.setState({
-        //     user: this.props.user,
-        //     username: this.props.user.username,
-        //     email: this.props.user.email,
-        // });
-
-        // for (let i = 0; i < this.props.user.metadata.length; i++) {
-        //     switch ( this.props.user.metadata[i].type) {
-        //         case 'phone_number':
-        //             this.setState({phone: this.props.user.metadata[i].field});
-        //             break;
-        //         case 'billing_line_1':
-        //             this.setState({b_address: this.props.user.metadata[i].field});
-        //             break;
-        //         case 'billing_line_2':
-        //             this.setState({b_address2: this.props.user.metadata[i].field});
-        //             break;
-        //         case 'billing_city':
-        //             this.setState({b_zipCode: this.props.user.metadata[i].field});
-        //             break;
-        //         case 'delivery_line_1':
-        //             this.setState({d_address: this.props.user.metadata[i].field});
-        //             break;
-        //         case 'delivery_line_2':
-        //             this.setState({d_address2: this.props.user.metadata[i].field});
-        //             break;
-        //         case 'delivery_city':
-        //             this.setState({d_zipCode: this.props.user.metadata[i].field});
-        //             break;
-        //         default:
-        //             return ;
-        //     }
-        // }
     };
 
     onZipCodeChange = e => {
@@ -135,12 +100,10 @@ class Profile extends React.Component
             b_city: this.state.identicalBillingAddress === false ? this.state.b_city : this.state.d_city,
             cities: [],
         };
-        console.log(userDetails);
         this.props.updateUser(userDetails);
     }
 
     render() {
-        const { user, isAuthenticated, item } = this.props;
         return (
             <div className="container mt-3">
                 <div className="row">
