@@ -68,18 +68,18 @@ class HomeController extends AbstractController
      */
     public function indexApi( ProductRepository $productRepository, Request $request , CartService $cartService, SerializerService $serializer)
     {
-        $user = $this->getUser();
-        if ($user) {
-            if ($user->getCart() && empty($cartService->getCart())) {
-                $cartService->generateCartSession($user->getCart());
-            }
-        }
+        // $user = $this->getUser();
+        // if ($user) {
+        //     if ($user->getCart() && empty($cartService->getCart())) {
+        //         $cartService->generateCartSession($user->getCart());
+        //     }
+        // }
 
-		$cart_items = $request->getSession()->get('cart', []);
-		$cart_count = 0;
-		foreach ( $cart_items as $id => $qty) {
-			$cart_count += $qty;
-		}
+		// $cart_items = $request->getSession()->get('cart', []);
+		// $cart_count = 0;
+		// foreach ( $cart_items as $id => $qty) {
+		// 	$cart_count += $qty;
+		// }
 
         $products = $productRepository->findAll();
         return JsonResponse::fromJsonString($serializer->serializeEntity($products, 'product'));

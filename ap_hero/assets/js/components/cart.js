@@ -2,12 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getItems, deleteItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class Cart extends React.Component 
 {
-    state = {
-         total: 0
-    };
 
     static propTypes = {
         getItems: PropTypes.func.isRequired,
@@ -27,7 +25,7 @@ class Cart extends React.Component
     displayItems = () => {
       let CartItem = (props) => {
         return (
-          <li className="d-flex flex-row ml-auto">
+          <li key={"cartitem-item-" + props.details.product.id} className="d-flex flex-row ml-auto">
               <a href="#" className="d-flex flex-row ml-auto">
                   x{ props.details.quantity } { props.details.parent.name } { props.details.product.name } | { props.details.product.price * props.details.quantity }€
               </a>
@@ -36,7 +34,7 @@ class Cart extends React.Component
         );
       }
       return this.props.item.items.map(item => {
-          return <CartItem details={item} />
+          return <CartItem key={"cartitem-" + item.product.id} details={item} />
       });
     }
 
@@ -59,8 +57,10 @@ class Cart extends React.Component
                     </div>
 
                     <div className="d-flex px-3">
-                        <button className="btn btn-outline btn-sm" >Editer quantité</button>
-                        <button className="btn btn-success btn-sm ml-auto" >Payer</button>
+                        <Link to={ "/cart" } className="btn btn-outline btn-sm">Editer quantité</Link>
+                        {/* <button className="btn btn-outline btn-sm" >Editer quantité</button> */}
+                        <Link to={ "/checkout" } className="btn btn-success btn-sm ml-auto">Payer</Link>
+                        {/* <button className="btn btn-success btn-sm ml-auto" >Payer</button> */}
                     </div>
                 </div>
             </span>

@@ -77,7 +77,7 @@ class PaiementController extends AbstractController
 				'cancel_url' => "{$_ENV['SERVER_URL']}/payment/fail?id={$uniq_id}"
 		),
 
-			'notification_url' => "{$_ENV['SERVER_URL']}/payment/notif?id={$uniq_id}"
+			// 'notification_url' => "{$_ENV['SERVER_URL']}/payment/notif?id={$uniq_id}"
 		));
 
 		$cartItems = $user->getCart()->getCartItems();

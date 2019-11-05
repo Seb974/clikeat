@@ -46,13 +46,11 @@ export const getProduct = id => dispatch => {
   } else {
     dispatch(setProductsLoading());
     axios
-      // .get('/product/api/' + id)
       .get('/api/products/' + id)
       .then((res) => {
         console.log(res.data);
         dispatch({
           type: GET_PRODUCT,
-          // payload: res.data
           payload: res.data
         })
       })

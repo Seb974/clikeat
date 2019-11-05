@@ -72,7 +72,10 @@ php bin/console server:start
 
 #launch a debugger server; in your controller use ```dump( $var );``` to obtain a var_dump
 php bin/console server:dump
-```
+
+# launch Mercure server
+JWT_KEY='aVerySecretKey' ADDR='localhost:3000' ALLOW_ANONYMOUS=1 CORS_ALLOWED_ORIGINS=* ./mercure/mercure
+
 ---
 
 # Project status

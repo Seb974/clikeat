@@ -15,6 +15,7 @@ use App\Entity\City;
 use App\Form\CityType;
 use App\Form\CityTypeAdmin;
 use App\Repository\CityRepository;
+use App\Service\Serializer\SerializerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,11 +37,14 @@ class CityController extends AbstractController
      *
      * @return Symfony\Component\HttpFoundation\Response
      */
-    public function index(CityRepository $cityRepository): Response
+    public function index(CityRepository $cityRepository, SerializerService $serializer): Response
     {
-        return $this->render('city/index.html.twig', [
-            'cities' => $cityRepository->findAll(),
-        ]);
+        // return $this->render('city/index.html.twig', [
+        //     'cities' => $cityRepository->findAll(),
+        // ]);
+
+        $cities = $cityRepository->findAll();
+        return JsonResponse::fromJsonString($serializer->serializeEntity($cities, 'product'));
     }
 
     /**

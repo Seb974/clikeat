@@ -78,7 +78,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Metadata", mappedBy="user")
-     * @Groups({"product", "user", "supplier", "variant"})
+     * @Groups({"product", "user", "supplier", "variant", "metadata"})
      * @ApiSubresource
      */
     private $metadata;
