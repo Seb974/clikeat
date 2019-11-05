@@ -7,7 +7,8 @@ import {
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
     REGISTER_SUCCESS,
-    REGISTER_FAIL
+    REGISTER_FAIL,
+    USER_UPDATED,
   } from '../actions/types';
   
   const storedToken = localStorage.getItem('token') || "";
@@ -32,10 +33,12 @@ import {
           isLoading: false,
            user: userExtractor(action.payload.token)
         };
+      case USER_UPDATED:
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       case LOGIN_SUCCESS:
       case REGISTER_SUCCESS:
         let user = userExtractor(action.payload.token);
-        // user.metadata = JSON.parse(user.metadata);
         localStorage.setItem('token', action.payload.token);
         localStorage.setItem('user', user);
         return {

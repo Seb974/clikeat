@@ -3,7 +3,7 @@ import axios from 'axios';
 import {Alert} from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { login } from '../actions/authActions';
+import { login, updateUser } from '../actions/authActions';
 import { clearErrors } from '../actions/errorActions';
 import { Redirect } from "react-router-dom"; 
 import { tokenConfig } from '../helpers/security';
@@ -11,6 +11,7 @@ import { tokenConfig } from '../helpers/security';
 class Profile extends React.Component 
 {
     state = {
+        user: {},
         username: '',
         email: '',
         identicalBillingAddress: true,
@@ -31,6 +32,7 @@ class Profile extends React.Component
         user: PropTypes.object,
         error: PropTypes.object.isRequired,
         login: PropTypes.func.isRequired,
+        updateUser: PropTypes.func.isRequired,
         clearErrors: PropTypes.func.isRequired
     };
 
@@ -50,6 +52,7 @@ class Profile extends React.Component
                 }
              });
         this.setState({
+            user: this.props.user,
             username: this.props.user.username,
             email: this.props.user.email,
             identicalBillingAddress: true,
@@ -85,13 +88,21 @@ class Profile extends React.Component
         if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode ) {
             document.getElementById('billingAddress-checkbox').setAttribute('checked', 'checked');
         }
-    }
+    };
 
     onZipCodeChange = e => {
-        for (let i = 0; i < this.state.cities.length; i++) {
-
+        this.setState({ [e.target.name]: e.target.value });
+        const errorMsg = "Code postal invalide.";
+        const notDeliverableMsg = "Nous ne livrons malheureusement pas encore votre ville...";
+        let cityId = e.target.id === 'b_zip' ? 'b_city' : 'd_city';
+        let cityInput = document.getElementById(cityId);
+        if ( (e.target.value.length > 0 && e.target.value.length < 5) || e.target.value.length <= 0 || e.target.value.length > 5 ) {
+            cityInput.textContent = e.target.value.length !== 0 ? errorMsg : '';
+            return ;
         }
-    }
+        const selectedCity = this.state.cities.find(city => city.zipCode === parseInt(e.target.value));
+        cityInput.textContent = (typeof selectedCity === 'undefined') ? errorMsg : ((cityId === 'd_city' && selectedCity.isDeliverable === false) ? notDeliverableMsg : selectedCity.name);
+    };
 
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value });
@@ -112,6 +123,7 @@ class Profile extends React.Component
                 b_address: '',
                 b_address2: '',
                 b_zipCode: '',
+                b_city: '',
             });
             e.target.removeAttribute('checked');
         } else {
@@ -120,9 +132,16 @@ class Profile extends React.Component
                 b_address: this.state.d_address,
                 b_address2: this.state.d_address2,
                 b_zipCode: this.state.d_zipCode,
+                b_city: this.state.d_city,
             });
             e.target.setAttribute('checked', 'checked');
         }
+    };
+
+    onSubmit = e => {
+        e.preventDefault();
+        let userDetails = { ...this.state, cities: []};
+        this.props.updateUser(userDetails);
     }
 
     render() {
@@ -132,7 +151,7 @@ class Profile extends React.Component
                 <div className="row">
                     {/* Addresses panel */}
                     <div className="col-md-8 order-md-1" id="adresses-panel">
-                        <form className="needs-validation">
+                        <form className="needs-validation" onSubmit={ this.onSubmit }>
                             <div className="row">
                                 <div className="row">
                                     {/* <div className="col-md-4 mb-3"></div> */}
@@ -140,21 +159,21 @@ class Profile extends React.Component
                                         {/* User info */}
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="firstName">Nom</label>
-                                            <input type="text" className="form-control" id="firstName" value={ this.state.username } required=""/>     {/* style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;" /> */}
+                                            <input type="text" className="form-control" id="firstName" name="username" value={ this.state.username } onChange={ this.onChange }/>     {/* style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;" /> */}
                                             <div className="invalid-feedback">
                                                 Un prénom est nécessaire pour la livraison.
                                             </div>
                                         </div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="email">Email</label>
-                                            <input type="email" className="form-control" id="email" value={ this.state.email }/>
+                                            <input type="email" className="form-control" id="email" name="email" value={ this.state.email } onChange={ this.onChange }/>
                                             <div className="invalid-feedback">
                                                 Merci de renseigner un email afin d'être informé de étapes de votre commande.
                                             </div>
                                         </div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="phone">Tel</label>
-                                            <input type="text" className="form-control" id="phone" value={ this.state.phone }/>
+                                            <input type="text" className="form-control" id="phone" name="phone" value={ this.state.phone } onChange={ this.onChange }/>
                                             <div className="invalid-feedback">
                                                 Merci de renseigner un tel afin d'être informé de étapes de votre commande.
                                             </div>
@@ -171,24 +190,24 @@ class Profile extends React.Component
                                 <div className="row">
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="address">Adresse</label>
-                                            <input type="text" className="form-control" id="address" value={ this.state.d_address } required="" />
+                                            <input type="text" className="form-control" id="address" name="d_address" value={ this.state.d_address } onChange={ this.onChange }/>
                                             <div className="invalid-feedback">
                                                 Merci de saisir une adresse de livraison.
                                             </div>
                                         </div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="complément">Complement d'adresse</label>
-                                            <input type="textarea" className="form-control" id="complément" value={ this.state.d_address2 } required="" placeholder="Appt, Immeuble, Digicode, etc" />
+                                            <input type="textarea" className="form-control" id="complément" name="d_address2" value={ this.state.d_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, Digicode, etc" />
                                         </div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="zip">CP</label>
-                                            <input type="text" className="form-control" id="zip" value={ this.state.d_zipCode } required="" />
-                                            <div className="invalid-feedback">
+                                            <input type="text" className="form-control" id="d_zip" name="d_zipCode" value={ this.state.d_zipCode } onChange={ this.onZipCodeChange }/>
+                                            <div className="invalid-feedback" id="d_zip_error">
                                                 Code Postal nécessaire.
                                             </div>
                                         </div>
                                         <div className="col-md-4 mb-3">
-                                            <span>{ this.state. d_city.name }</span>
+                                            <span id="d_city">{ this.state.b_city.name }</span>
                                             {/* { this.state. d_city.name } */}
                                         </div>
                                 </div>
@@ -214,26 +233,31 @@ class Profile extends React.Component
                                         <div className="row">
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="address">Adresse</label>
-                                                <input type="text" className="form-control" id="address" value={ this.state.b_address } required="" />
+                                                <input type="text" className="form-control" id="address" name="b_address" value={ this.state.b_address } onChange={ this.onChange }/>
                                                 <div className="invalid-feedback">
                                                     Merci de saisir une adresse de livraison.
                                                 </div>
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="complément">Complement d'adresse</label>
-                                                <input type="textarea" className="form-control" id="complément" value={ this.state.b_address2 } required="" placeholder="Appt, Immeuble, Digicode, etc" />
+                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.b_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, Digicode, etc" />
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="zip">CP</label>
-                                                <input type="text" className="form-control" id="zip" value={ this.state.b_zipCode } required="" />
-                                                <div className="invalid-feedback">
+                                                <input type="text" className="form-control" id="b_zip" name="b_zipCode" value={ this.state.b_zipCode } onChange={ this.onZipCodeChange }/>
+                                                <div className="invalid-feedback" id="b_zip_error">
                                                     Code Postal nécessaire.
+                                                </div>
+                                                <div className="col-md-4 mb-3">
+                                                    <span id="b_city">{ this.state.b_city.name }</span>
+                                                    {/* { this.state. d_city.name } */}
                                                 </div>
                                             </div>
                                         </div>
                                     </span>)
                                 }
                             </div>
+                            <button className="btn btn-primary btn-lg btn-block" type="submit">Mettre à jour</button>
                         </form>
                     </div>
                 </div>
@@ -248,4 +272,4 @@ const mapStateToProps = state => ({
     error: state.error
   });
   
-  export default connect( mapStateToProps, { login, clearErrors })(Profile);
+  export default connect( mapStateToProps, { login, updateUser, clearErrors })(Profile);

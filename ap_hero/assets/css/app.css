@@ -59,15 +59,21 @@
 #adresses-panel
 {
     margin-bottom: 30px;
-    margin-left: 10px;
+    /* margin-left: 10px; */
     padding-bottom: 15px;
-    padding-left: 5px;
+    /* padding-left: 5px; */
 }
 
 #map-example-container
 {
     height: 300px;
     position: relative;
+}
+
+.needs-validation
+{
+    margin-bottom: 30px;
+    padding-bottom: 15px;
 }
 
 .leaflet-container {
