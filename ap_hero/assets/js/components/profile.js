@@ -11,18 +11,18 @@ import { tokenConfig } from '../helpers/security';
 class Profile extends React.Component 
 {
     state = {
-        user: {},
-        username: '',
-        email: '',
+        user: this.props.user || {},
+        username: this.props.user.username || '',
+        email: this.props.user.email || '',
+        phone: this.props.user.metadata.find(metadata => (metadata.type === 'phone_number')).field || '',
+        d_address: this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_1')).field || '',
+        d_address2: this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_2')).field || '',
+        d_zipCode: this.props.user.metadata.find(metadata => (metadata.type === 'delivery_city')).field || '',
+        b_address: this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_1')).field || '',
+        b_address2: this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_2')).field || '',
+        b_zipCode: this.props.user.metadata.find(metadata => (metadata.type === 'billing_city')).field || '',
         identicalBillingAddress: true,
-        phone: '',
-        d_address: '',
-        d_address2: '',
-        d_zipCode: '',
         d_city: '',
-        b_address: '',
-        b_address2: '',
-        b_zipCode: '',
         b_city: '',
         cities: []
     };
@@ -37,6 +37,13 @@ class Profile extends React.Component
     };
 
     componentDidMount = () => {
+        console.log(this.props.user);
+        console.log(this.state);
+        if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode )
+            this.setState( { identicalBillingAddress: true } );
+        else 
+            this.setState( { identicalBillingAddress: false } );
+        
         axios.get('/api/cities', tokenConfig())
              .then((res) => {
                 this.setState({ cities : res.data['hydra:member'] });
@@ -44,50 +51,46 @@ class Profile extends React.Component
                     let user_d_city = this.props.user.metadata.find(meta => meta.type === 'delivery_city');
                     let user_b_city = this.props.user.metadata.find(meta => meta.type === 'billing_city');
                     let d_city = (typeof user_d_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_d_city.field)) : '';
-                    let b_city = (user_b_city === user_d_city) ? d_city : ((typeof user_d_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_b_city.field)) : '');
+                    let b_city = (user_b_city === user_d_city) ? d_city : ((typeof user_b_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_b_city.field)) : '');
                     this.setState({
                         d_city: d_city,
                         b_city: b_city,
                     });
                 }
              });
-        this.setState({
-            user: this.props.user,
-            username: this.props.user.username,
-            email: this.props.user.email,
-            identicalBillingAddress: true,
-        });
+        // this.setState({
+        //     user: this.props.user,
+        //     username: this.props.user.username,
+        //     email: this.props.user.email,
+        // });
 
-        for (let i = 0; i < this.props.user.metadata.length; i++) {
-            switch ( this.props.user.metadata[i].type) {
-                case 'phone_number':
-                    this.setState({phone: this.props.user.metadata[i].field});
-                    break;
-                case 'billing_line_1':
-                    this.setState({b_address: this.props.user.metadata[i].field});
-                    break;
-                case 'billing_line_2':
-                    this.setState({b_address2: this.props.user.metadata[i].field});
-                    break;
-                case 'billing_city':
-                    this.setState({b_zipCode: this.props.user.metadata[i].field});
-                    break;
-                case 'delivery_line_1':
-                    this.setState({d_address: this.props.user.metadata[i].field});
-                    break;
-                case 'delivery_line_2':
-                    this.setState({d_address2: this.props.user.metadata[i].field});
-                    break;
-                case 'delivery_city':
-                    this.setState({d_zipCode: this.props.user.metadata[i].field});
-                    break;
-                default:
-                    return ;
-            }
-        }
-        if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode ) {
-            document.getElementById('billingAddress-checkbox').setAttribute('checked', 'checked');
-        }
+        // for (let i = 0; i < this.props.user.metadata.length; i++) {
+        //     switch ( this.props.user.metadata[i].type) {
+        //         case 'phone_number':
+        //             this.setState({phone: this.props.user.metadata[i].field});
+        //             break;
+        //         case 'billing_line_1':
+        //             this.setState({b_address: this.props.user.metadata[i].field});
+        //             break;
+        //         case 'billing_line_2':
+        //             this.setState({b_address2: this.props.user.metadata[i].field});
+        //             break;
+        //         case 'billing_city':
+        //             this.setState({b_zipCode: this.props.user.metadata[i].field});
+        //             break;
+        //         case 'delivery_line_1':
+        //             this.setState({d_address: this.props.user.metadata[i].field});
+        //             break;
+        //         case 'delivery_line_2':
+        //             this.setState({d_address2: this.props.user.metadata[i].field});
+        //             break;
+        //         case 'delivery_city':
+        //             this.setState({d_zipCode: this.props.user.metadata[i].field});
+        //             break;
+        //         default:
+        //             return ;
+        //     }
+        // }
     };
 
     onZipCodeChange = e => {
@@ -116,31 +119,23 @@ class Profile extends React.Component
         this.props.login(user);
     };
 
-    handleBillingAddress = e => {
-        if ( this.state.identicalBillingAddress === true) {
-            this.setState({
-                identicalBillingAddress: false,
-                b_address: '',
-                b_address2: '',
-                b_zipCode: '',
-                b_city: '',
-            });
-            e.target.removeAttribute('checked');
-        } else {
-            this.setState({
-                identicalBillingAddress: true,
-                b_address: this.state.d_address,
-                b_address2: this.state.d_address2,
-                b_zipCode: this.state.d_zipCode,
-                b_city: this.state.d_city,
-            });
-            e.target.setAttribute('checked', 'checked');
-        }
+    handleBillingAddress = (e) => {
+        this.setState({
+            identicalBillingAddress: !this.state.identicalBillingAddress,
+          });
     };
 
     onSubmit = e => {
         e.preventDefault();
-        let userDetails = { ...this.state, cities: []};
+        let userDetails = { 
+            ...this.state,
+            b_address: this.state.identicalBillingAddress === false ? this.state.b_address : this.state.d_address,
+            b_address2: this.state.identicalBillingAddress === false ? this.state.b_address2 : this.state.d_address2,
+            b_zipCode: this.state.identicalBillingAddress === false ? this.state.b_zipCode : this.state.d_zipCode,
+            b_city: this.state.identicalBillingAddress === false ? this.state.b_city : this.state.d_city,
+            cities: [],
+        };
+        console.log(userDetails);
         this.props.updateUser(userDetails);
     }
 
@@ -222,7 +217,7 @@ class Profile extends React.Component
 
                                 <div className="col-md-4 mb-3">
                                     <label className="custom-control custom-checkbox custom-checkbox-primary">
-                                        <input id="billingAddress-checkbox" type="checkbox" className="custom-control-input" onClick={ this.handleBillingAddress } />
+                                         <input id="billingAddress-checkbox" type="checkbox" className="custom-control-input" checked={this.state.identicalBillingAddress} onChange={ this.handleBillingAddress } />      {/* defaultChecked */}
                                         <span className="custom-control-indicator"></span>
                                         <span className="custom-control-description">Identique à adresse de livraison</span>
                                     </label>
@@ -233,18 +228,18 @@ class Profile extends React.Component
                                         <div className="row">
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="address">Adresse</label>
-                                                <input type="text" className="form-control" id="address" name="b_address" value={ this.state.b_address } onChange={ this.onChange }/>
+                                                <input type="text" className="form-control" id="address" name="b_address" value={ this.state.identicalBillingAddress === false ? this.state.b_address : this.state.d_address } onChange={ this.onChange }/>
                                                 <div className="invalid-feedback">
                                                     Merci de saisir une adresse de livraison.
                                                 </div>
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="complément">Complement d'adresse</label>
-                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.b_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, Digicode, etc" />
+                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.identicalBillingAddress === false ? this.state.b_address2 : this.state.d_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, Digicode, etc" />
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="zip">CP</label>
-                                                <input type="text" className="form-control" id="b_zip" name="b_zipCode" value={ this.state.b_zipCode } onChange={ this.onZipCodeChange }/>
+                                                <input type="text" className="form-control" id="b_zip" name="b_zipCode" value={ this.state.identicalBillingAddress === false ? this.state.b_zipCode : this.state.d_zipCode } onChange={ this.onZipCodeChange }/>
                                                 <div className="invalid-feedback" id="b_zip_error">
                                                     Code Postal nécessaire.
                                                 </div>
