@@ -14,13 +14,22 @@ class Profile extends React.Component
         user: this.props.user || {},
         username: this.props.user.username || '',
         email: this.props.user.email || '',
-        phone: this.props.user.metadata.find(metadata => (metadata.type === 'phone_number')).field || '',
-        d_address: this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_1')).field || '',
-        d_address2: this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_2')).field || '',
-        d_zipCode: this.props.user.metadata.find(metadata => (metadata.type === 'delivery_city')).field || '',
-        b_address: this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_1')).field || '',
-        b_address2: this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_2')).field || '',
-        b_zipCode: this.props.user.metadata.find(metadata => (metadata.type === 'billing_city')).field || '',
+        phone: typeof this.props.user.metadata.find(metadata => (metadata.type === 'phone_number')) === 'undefined' ? '' : 
+                this.props.user.metadata.find(metadata => (metadata.type === 'phone_number')).field || '',
+        d_address: typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_1')) === 'undefined' ? '' :
+                this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_1')).field || '',
+        d_address2: typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_2')) === 'undefined' ? '' : 
+                this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_2')).field || '',
+        d_zipCode: typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_city')) === 'undefined' ? '' :
+                this.props.user.metadata.find(metadata => (metadata.type === 'delivery_city')).field || '',
+        b_address: typeof this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_1')) === 'undefined' ? '' :
+                this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_1')).field || '',
+        b_address2: typeof this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_2')) === 'undefined' ? '' :
+                this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_2')).field || '',
+        b_zipCode: typeof this.props.user.metadata.find(metadata => (metadata.type === 'billing_city')) === 'undefined' ? '' :
+                this.props.user.metadata.find(metadata => (metadata.type === 'billing_city')).field || '',
+        d_gps: typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_gps')) === 'undefined' ? '-21.329519,55.471617' :
+                this.props.user.metadata.find(metadata => (metadata.type === 'delivery_gps')).field || '-21.329519,55.471617',
         identicalBillingAddress: true,
         d_city: '',
         b_city: '',
@@ -37,6 +46,7 @@ class Profile extends React.Component
     };
 
     componentDidMount = () => {
+        this.initMap();
         if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode )
             this.setState( { identicalBillingAddress: true } );
         else 
@@ -58,6 +68,111 @@ class Profile extends React.Component
              });
     };
 
+    initMap = () => {
+        let markers = [];
+        console.log(this.state.d_gps);
+        let [lat, long] = this.state.d_gps.split(',');
+        console.log("Latitude = " + lat);
+        console.log("Longitude = " + long);
+        let placesAutocomplete = places( {
+            appId     : process.env.ALGOLIA_APPID,
+            apiKey    : process.env.ALGOLIA_APIKEY,
+            container : document.querySelector( '#input-map' ),
+        } ).configure( {
+            countries         : ['fr'],
+            useDeviceLocation : false
+        } );
+
+        let map = L.map( 'map-example-container', {
+            scrollWheelZoom : true,
+            zoomControl     : true
+        } );
+
+        let osmLayer = new L.TileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            minZoom     : 8,
+            maxZoom     : 19,
+            attribution : 'Map © <a href="https://openstreetmap.org">OpenStreetMap</a>'
+        } );
+
+        let userAddress = new L.LatLng( lat, long);
+        map.setView( userAddress, 1 );
+        map.addLayer( osmLayer );
+        let marker = L.marker( userAddress, {opacity: .4} );
+        marker.addTo( map );
+        markers.push( marker );
+        if (this.state.d_gps !== '-21.329519,55.471617') {
+            findBestZoom();
+        }
+
+        placesAutocomplete.on( 'suggestions'  , handleOnSuggestions.bind(this));
+        placesAutocomplete.on( 'cursorchanged', handleOnCursorchanged.bind(this));
+        placesAutocomplete.on( 'change'       , handleOnChange.bind(this));
+        placesAutocomplete.on( 'clear'        , handleOnClear.bind(this));
+
+        function handleOnSuggestions( e ) {
+            markers.forEach( removeMarker );
+            markers = [];
+            if ( e.suggestions.length === 0 ) {
+                map.setView( new L.LatLng( 0, 0 ), 1 );
+                return;
+            }
+            e.suggestions.forEach( addMarker );
+            findBestZoom();
+        }
+    
+        function handleOnChange( e ) {
+            markers.forEach( function ( marker, markerIndex ) {
+                if ( markerIndex === e.suggestionIndex ) {
+                    markers = [marker];
+                    marker.setOpacity( 1 );
+                    findBestZoom();
+                } else {
+                    removeMarker( marker );
+                }
+            } );
+            this.setState({
+                d_address: e.suggestion.value,
+                d_gps: e.suggestion.latlng.lat + ',' + e.suggestion.latlng.lng,
+            });
+        }
+    
+        function handleOnClear() {
+            map.setView( new L.LatLng( 0, 0 ), 1 );
+            markers.forEach( removeMarker );
+        }
+    
+        function handleOnCursorchanged( e ) {
+            markers.forEach( function ( marker, markerIndex ) {
+                if ( markerIndex === e.suggestionIndex ) {
+                    marker.setOpacity( 1 );
+                    marker.setZIndexOffset( 1000 );
+                } else {
+                    marker.setZIndexOffset( 0 );
+                    marker.setOpacity( 0.5 );
+                }
+            } );
+        }
+    
+        function addMarker( suggestion ) {
+            let marker = L.marker( suggestion.latlng, {
+                opacity: .4
+            } );
+            marker.addTo( map );
+            markers.push( marker );
+        }
+    
+        function removeMarker( marker ) {
+            map.removeLayer( marker );
+        }
+    
+        function findBestZoom() {
+            let featureGroup = L.featureGroup( markers );
+            map.fitBounds( featureGroup.getBounds().pad( 0.5 ), {
+                animate: false
+            } );
+        }
+    }
+
     onZipCodeChange = e => {
         this.setState({ [e.target.name]: e.target.value });
         const errorMsg = "Code postal invalide.";
@@ -76,13 +191,13 @@ class Profile extends React.Component
         this.setState({ [e.target.name]: e.target.value });
     };
     
-    handleLogin = e => {
-        e.preventDefault();
-        const { email, password } = this.state;
-        const user = { email, password};
-        this.setState({email: '', password: ''});
-        this.props.login(user);
-    };
+    // handleLogin = e => {
+    //     e.preventDefault();
+    //     const { email, password } = this.state;
+    //     const user = { email, password};
+    //     this.setState({email: '', password: ''});
+    //     this.props.login(user);
+    // };
 
     handleBillingAddress = (e) => {
         this.setState({
@@ -146,13 +261,19 @@ class Profile extends React.Component
                                 </div>
 
                                 <div className="row">
-                                        <div className="col-md-4 mb-3">
+                                        <div className="col-md-12">
+                                            <div id="map-example-container">
+                                                {/* <Map/> */}
+                                            </div>
+                                        </div>
+                                        <div className="col-md-12">
                                             <label htmlFor="address">Adresse</label>
-                                            <input type="text" className="form-control" id="address" name="d_address" value={ this.state.d_address } onChange={ this.onChange }/>
+                                            <input type="text" className="form-control" id="input-map" name="d_address" value={ this.state.d_address } onChange={ this.onChange }/>
                                             <div className="invalid-feedback">
                                                 Merci de saisir une adresse de livraison.
                                             </div>
                                         </div>
+                                        <div className="col-md-4 mb-3"></div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="complément">Complement d'adresse</label>
                                             <input type="textarea" className="form-control" id="complément" name="d_address2" value={ this.state.d_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, Digicode, etc" />
@@ -168,6 +289,15 @@ class Profile extends React.Component
                                             <span id="d_city">{ this.state.b_city.name }</span>
                                             {/* { this.state. d_city.name } */}
                                         </div>
+
+
+                                        <div className="col-md-2 mt-3">
+                                            <small>
+                                                <label htmlFor="gps">GPS</label>
+                                                <input type="hidden" name="d_gps" className="form-control" id="gps" value={ this.state.d_gps } placeholder="" onChange={ this.onChange } />
+                                            </small>
+                                        </div>
+
                                 </div>
                             </div>
 
@@ -198,7 +328,7 @@ class Profile extends React.Component
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="complément">Complement d'adresse</label>
-                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.identicalBillingAddress === false ? this.state.b_address2 : this.state.d_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, Digicode, etc" />
+                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.identicalBillingAddress === false ? this.state.b_address2 : this.state.d_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, etc" />
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="zip">CP</label>
@@ -206,10 +336,10 @@ class Profile extends React.Component
                                                 <div className="invalid-feedback" id="b_zip_error">
                                                     Code Postal nécessaire.
                                                 </div>
-                                                <div className="col-md-4 mb-3">
-                                                    <span id="b_city">{ this.state.b_city.name }</span>
-                                                    {/* { this.state. d_city.name } */}
-                                                </div>
+                                            </div>
+                                            <div className="col-md-4 mb-3">
+                                                <span id="b_city">{ this.state.b_city.name }</span>
+                                                {/* { this.state. d_city.name } */}
                                             </div>
                                         </div>
                                     </span>)
