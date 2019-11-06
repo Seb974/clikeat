@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { logout } from '../actions/authActions';
 import PropTypes from 'prop-types';
 import { tokenConfig } from '../helpers/security';
-import Map from './map';
 
 class Checkout extends Component {
 
