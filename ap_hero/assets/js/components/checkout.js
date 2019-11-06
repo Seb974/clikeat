@@ -6,22 +6,31 @@ import { connect } from 'react-redux';
 import { logout } from '../actions/authActions';
 import PropTypes from 'prop-types';
 import { tokenConfig } from '../helpers/security';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
 
 class Checkout extends Component {
 
     state = {
-        username: '',
-        email: '',
+        user: this.props.user || {},
+        username: this.props.user === null ? '' : this.props.user.username || '',
+        email: this.props.user === null ? '' : this.props.user.email || '',
+        phone: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'phone_number')) === 'undefined' ? 
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'phone_number')).field || '',
+        d_address: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_1')) === 'undefined' ?
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_1')).field || '',
+        d_address2: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_2')) === 'undefined' ?
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'delivery_line_2')).field || '',
+        d_zipCode: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_city')) === 'undefined' ? 
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'delivery_city')).field || '',
+        b_address: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_1')) === 'undefined' ?
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_1')).field || '',
+        b_address2: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_2')) === 'undefined' ?
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'billing_line_2')).field || '',
+        b_zipCode: this.props.user === null ? '' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'billing_city')) === 'undefined' ? 
+                '' : this.props.user.metadata.find(metadata => (metadata.type === 'billing_city')).field || '',
+        d_gps: this.props.user === null ? '-21.329519,55.471617' : typeof this.props.user.metadata.find(metadata => (metadata.type === 'delivery_gps')) === 'undefined' ?
+                '-21.329519,55.471617' : this.props.user.metadata.find(metadata => (metadata.type === 'delivery_gps')).field || '-21.329519,55.471617',
         identicalBillingAddress: true,
-        phone: '',
-        d_address: '',
-        d_address2: '',
-        d_zipCode: '',
         d_city: '',
-        b_address: '',
-        b_address2: '',
-        b_zipCode: '',
         b_city: '',
         cities: []
     }
@@ -33,64 +42,32 @@ class Checkout extends Component {
 
     componentDidMount = () => {
         this.initMap();
+        if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode )
+            this.setState( { identicalBillingAddress: true } );
+        else 
+            this.setState( { identicalBillingAddress: false } );
+
         axios.get('/api/cities', tokenConfig())
              .then((res) => {
                 this.setState({ cities : res.data['hydra:member'] });
-                if (this.props.user.metadata.length > 0) {
-                    let user_d_city = this.props.user.metadata.find(meta => meta.type === 'delivery_city');
-                    let user_b_city = this.props.user.metadata.find(meta => meta.type === 'billing_city');
-                    let d_city = (typeof user_d_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_d_city.field)) : '';
-                    let b_city = (user_b_city === user_d_city) ? d_city : ((typeof user_d_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_b_city.field)) : '');
-                    this.setState({
-                        d_city: d_city,
-                        b_city: b_city,
-                    });
+                if (this.props.user !== null) {
+                    if (this.props.user.metadata.length > 0) {
+                        let user_d_city = this.props.user.metadata.find(meta => meta.type === 'delivery_city');
+                        let user_b_city = this.props.user.metadata.find(meta => meta.type === 'billing_city');
+                        let d_city = (typeof user_d_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_d_city.field)) : '';
+                        let b_city = (user_b_city === user_d_city) ? d_city : ((typeof user_b_city !== 'undefined') ? res.data['hydra:member'].find(city => city.zipCode === parseInt(user_b_city.field)) : '');
+                        this.setState({
+                            d_city: d_city,
+                            b_city: b_city,
+                        });
+                    }
                 }
-                if (this.state.d_address !== '' && this.state.d_zipCode !== '') {
-                    // let search = this.state.d_address2 === '' ? this.state.d_address + " " + this.state.d_zipCode : this.state.d_address + " " + this.state.d_address2 + " " + this.state.d_zipCode;
-                    // console.log(search);
-                } 
              });
-        this.setState({
-            username: this.props.user.username,
-            email: this.props.user.email,
-            identicalBillingAddress: true,
-        });
-
-        for (let i = 0; i < this.props.user.metadata.length; i++) {
-            switch ( this.props.user.metadata[i].type) {
-                case 'phone_number':
-                    this.setState({phone: this.props.user.metadata[i].field});
-                    break;
-                case 'billing_line_1':
-                    this.setState({b_address: this.props.user.metadata[i].field});
-                    break;
-                case 'billing_line_2':
-                    this.setState({b_address2: this.props.user.metadata[i].field});
-                    break;
-                case 'billing_city':
-                    this.setState({b_zipCode: this.props.user.metadata[i].field});
-                    break;
-                case 'delivery_line_1':
-                    this.setState({d_address: this.props.user.metadata[i].field});
-                    break;
-                case 'delivery_line_2':
-                    this.setState({d_address2: this.props.user.metadata[i].field});
-                    break;
-                case 'delivery_city':
-                    this.setState({d_zipCode: this.props.user.metadata[i].field});
-                    break;
-                default:
-                    return ;
-            }
-        }
-        if (this.state.b_address === this.state.d_address && this.state.b_address2 === this.state.d_address2 && this.state.b_zipCode === this.state.d_zipCode ) {
-            document.getElementById('billingAddress-checkbox').setAttribute('checked', 'checked');
-        }
     }
 
     initMap = () => {
         let markers = [];
+        let [lat, long] = this.state.d_gps.split(',');
         let placesAutocomplete = places( {
             appId     : process.env.ALGOLIA_APPID,
             apiKey    : process.env.ALGOLIA_APIKEY,
@@ -111,13 +88,20 @@ class Checkout extends Component {
             attribution : 'Map © <a href="https://openstreetmap.org">OpenStreetMap</a>'
         } );
 
-        map.setView( new L.LatLng( -21.329519, 55.471617 ), 1 );
+        let userAddress = new L.LatLng( lat, long);
+        map.setView( userAddress, 1 );
         map.addLayer( osmLayer );
+        let marker = L.marker( userAddress, {opacity: .4} );
+        marker.addTo( map );
+        markers.push( marker );
+        if (this.state.d_gps !== '-21.329519,55.471617') {
+            findBestZoom();
+        }
 
-        placesAutocomplete.on( 'suggestions'  , handleOnSuggestions   );
-        placesAutocomplete.on( 'cursorchanged', handleOnCursorchanged );
-        placesAutocomplete.on( 'change'       , handleOnChange        );
-        placesAutocomplete.on( 'clear'        , handleOnClear         );
+        placesAutocomplete.on( 'suggestions'  , handleOnSuggestions.bind(this));
+        placesAutocomplete.on( 'cursorchanged', handleOnCursorchanged.bind(this));
+        placesAutocomplete.on( 'change'       , handleOnChange.bind(this));
+        placesAutocomplete.on( 'clear'        , handleOnClear.bind(this));
 
         function handleOnSuggestions( e ) {
             markers.forEach( removeMarker );
@@ -140,7 +124,10 @@ class Checkout extends Component {
                     removeMarker( marker );
                 }
             } );
-            document.querySelector('#gps').value = e.suggestion.latlng.lat + ',' + e.suggestion.latlng.lng;
+            this.setState({
+                d_address: e.suggestion.value,
+                d_gps: e.suggestion.latlng.lat + ',' + e.suggestion.latlng.lng,
+            });
         }
     
         function handleOnClear() {
@@ -184,6 +171,39 @@ class Checkout extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
+    onZipCodeChange = e => {
+        this.setState({ [e.target.name]: e.target.value });
+        const errorMsg = "Code postal invalide.";
+        const notDeliverableMsg = "Nous ne livrons malheureusement pas encore votre ville...";
+        let cityId = e.target.id === 'b_zip' ? 'b_city' : 'd_city';
+        let cityInput = document.getElementById(cityId);
+        if ( (e.target.value.length > 0 && e.target.value.length < 5) || e.target.value.length <= 0 || e.target.value.length > 5 ) {
+            cityInput.textContent = e.target.value.length !== 0 ? errorMsg : '';
+            return ;
+        }
+        const selectedCity = this.state.cities.find(city => city.zipCode === parseInt(e.target.value));
+        cityInput.textContent = (typeof selectedCity === 'undefined') ? errorMsg : ((cityId === 'd_city' && selectedCity.isDeliverable === false) ? notDeliverableMsg : selectedCity.name);
+    };
+
+    handleBillingAddress = (e) => {
+        this.setState({
+            identicalBillingAddress: !this.state.identicalBillingAddress,
+          });
+    };
+
+    onSubmit = e => {
+        e.preventDefault();
+        let userDetails = { 
+            ...this.state,
+            b_address: this.state.identicalBillingAddress === false ? this.state.b_address : this.state.d_address,
+            b_address2: this.state.identicalBillingAddress === false ? this.state.b_address2 : this.state.d_address2,
+            b_zipCode: this.state.identicalBillingAddress === false ? this.state.b_zipCode : this.state.d_zipCode,
+            b_city: this.state.identicalBillingAddress === false ? this.state.b_city : this.state.d_city,
+            cities: [],
+        };
+        // this.props.updateUser(userDetails);
+    }
+
     displayItems = () => {
         let CartItem = (props) => {
           return (
@@ -206,7 +226,7 @@ class Checkout extends Component {
     }
 
     render() {
-        const { user, isAuthenticated, item } = this.props;
+        const { item } = this.props;
         return (
             <div className="container mt-3">
                 <div className="row">
@@ -245,7 +265,7 @@ class Checkout extends Component {
 
                     {/* Addresses panel */}
                     <div className="col-md-8 order-md-1" id="adresses-panel">
-                        <form className="needs-validation">
+                        <form className="needs-validation" onSubmit={ this.onSubmit }>
                             <div className="row">
                                 <div className="row">
                                     {/* <div className="col-md-4 mb-3"></div> */}
@@ -283,7 +303,9 @@ class Checkout extends Component {
 
                                 <div className="row">
                                         <div className="col-md-12">
-                                            <div id="map-example-container"></div>
+                                            <div id="map-example-container">
+                                                {/* <Map/> */}
+                                            </div>
                                         </div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="input-map">Adresse</label>
@@ -298,19 +320,19 @@ class Checkout extends Component {
                                         </div>
                                         <div className="col-md-4 mb-3">
                                             <label htmlFor="zip">CP</label>
-                                            <input type="text" className="form-control" id="zip" name="d_zipCode"  value={ this.state.d_zipCode } onChange={ this.onChange } required/>
+                                            <input type="text" className="form-control" id="d_zip" name="d_zipCode"  value={ this.state.d_zipCode } onChange={ this.onZipCodeChange } required/>
                                             <div className="invalid-feedback">
                                                 Code Postal nécessaire.
                                             </div>
                                         </div>
                                         <div className="col-md-4 mb-3">
-                                            <span>{ this.state. d_city.name }</span>
+                                            <span id="d_city">{ this.state. d_city.name }</span>
                                             {/* { this.state. d_city.name } */}
                                         </div>
                                         <div className="col-md-2 mt-3">
                                             <small>
                                                 <label htmlFor="complément">GPS</label>
-                                                <input type="input" className="form-control" id="gps" value="" placeholder="" onChange={ this.onChange } />
+                                                <input type="hidden" className="form-control" id="gps" name="d_gps" value={ this.state.d_gps } placeholder="" onChange={ this.onChange } />
                                             </small>
                                         </div>
                                 </div>
@@ -427,7 +449,7 @@ class Checkout extends Component {
 
                                 <div className="col-md-4 mb-3">
                                     <label className="custom-control custom-checkbox custom-checkbox-primary">
-                                        <input id="billingAddress-checkbox" type="checkbox" className="custom-control-input" onClick={ this.handleBillingAddress } />
+                                        <input id="billingAddress-checkbox" type="checkbox" className="custom-control-input" checked={this.state.identicalBillingAddress} onChange={ this.handleBillingAddress } />
                                         <span className="custom-control-indicator"></span>
                                         <span className="custom-control-description">Identique à adresse de livraison</span>
                                     </label>
@@ -438,21 +460,25 @@ class Checkout extends Component {
                                         <div className="row">
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="address">Adresse</label>
-                                                <input type="text" className="form-control" id="address" name="b_address"  value={ this.state.b_address } onChange={ this.onChange } />
+                                                <input type="text" className="form-control" id="address" name="b_address" value={ this.state.identicalBillingAddress === false ? this.state.b_address : this.state.d_address } onChange={ this.onChange } />
                                                 <div className="invalid-feedback">
                                                     Merci de saisir une adresse de livraison.
                                                 </div>
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="complément">Complement d'adresse</label>
-                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.b_address2 } placeholder="Appt, Immeuble, Digicode, etc" onChange={ this.onChange } />
+                                                <input type="textarea" className="form-control" id="complément" name="b_address2" value={ this.state.identicalBillingAddress === false ? this.state.b_address2 : this.state.d_address2 } onChange={ this.onChange } placeholder="Appt, Immeuble, etc" />
                                             </div>
                                             <div className="col-md-4 mb-3">
                                                 <label htmlFor="zip">CP</label>
-                                                <input type="text" className="form-control" id="zip" name="b_zipCode" value={ this.state.b_zipCode } onChange={ this.onChange } />
+                                                <input type="text" className="form-control" id="b_zip" name="b_zipCode" value={ this.state.identicalBillingAddress === false ? this.state.b_zipCode : this.state.d_zipCode } onChange={ this.onZipCodeChange } />
                                                 <div className="invalid-feedback">
                                                     Code Postal nécessaire.
                                                 </div>
+                                            </div>
+                                            <div className="col-md-4 mb-3">
+                                                <span id="b_city">{ this.state.b_city.name }</span>
+                                                {/* { this.state. d_city.name } */}
                                             </div>
                                         </div>
                                     </span>)
@@ -472,4 +498,4 @@ const mapStateToProps = state => ({
     user: state.auth.user,
   });
   
-  export default connect( mapStateToProps )(Checkout);
+export default connect( mapStateToProps )(Checkout);

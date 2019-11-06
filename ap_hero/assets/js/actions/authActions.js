@@ -112,6 +112,7 @@ export const updateUser = userDetails => (dispatch, getState) => {
   const billing_line_1 = userDetails.user.metadata.find(metadata => (metadata.type === 'billing_line_1'));
   const billing_line_2 = userDetails.user.metadata.find(metadata => (metadata.type === 'billing_line_2'));
   const billing_city = userDetails.user.metadata.find(metadata => (metadata.type === 'billing_city'));
+  const delivery_gps = userDetails.user.metadata.find(metadata => (metadata.type === 'delivery_gps'));
   const phone_number_id = typeof phone_number !== 'undefined' ? phone_number.id : -1;
   const delivery_line_1_id = typeof delivery_line_1 !== 'undefined' ? delivery_line_1.id : -1;
   const delivery_line_2_id = typeof delivery_line_2 !== 'undefined' ? delivery_line_2.id : -1;
@@ -119,6 +120,7 @@ export const updateUser = userDetails => (dispatch, getState) => {
   const billing_line_1_id = typeof billing_line_1 !== 'undefined' ? billing_line_1.id : -1;
   const billing_line_2_id = typeof billing_line_2 !== 'undefined' ? billing_line_2.id : -1;
   const billing_city_id = typeof billing_city !== 'undefined' ? billing_city.id : -1;
+  const delivery_gps_id = typeof delivery_gps !== 'undefined' ? delivery_gps.id : -1;
 
   if ((typeof phone_number === 'undefined' || phone_number.field !== userDetails.phone) && userDetails.phone !== '') {
       if (phone_number_id === -1)
@@ -148,6 +150,14 @@ export const updateUser = userDetails => (dispatch, getState) => {
         axios.post('/api/metadata', JSON.stringify({type:'delivery_city', field: userDetails.d_zipCode, user: '/api/users/' + userDetails.user.id}), tokenConfig(getState))
     } else {
         axios.put('/api/metadata/' + delivery_city_id, JSON.stringify({field: userDetails.d_zipCode}), tokenConfig(getState))
+    }
+  }
+
+  if ((typeof delivery_gps === 'undefined' || delivery_gps.field !== userDetails.d_gps) && userDetails.d_gps !== '') {
+    if (delivery_gps_id === -1) {
+        axios.post('/api/metadata', JSON.stringify({type:'delivery_gps', field: userDetails.d_gps, user: '/api/users/' + userDetails.user.id}), tokenConfig(getState))
+    } else {
+        axios.put('/api/metadata/' + delivery_gps_id, JSON.stringify({field: userDetails.d_gps}), tokenConfig(getState))
     }
   }
 
