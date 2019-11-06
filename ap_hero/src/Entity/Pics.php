@@ -4,9 +4,16 @@ namespace App\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PicsRepository")
+ * @ApiResource(subresourceOperations={
+ *     "api_products_pics_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Pics
 {

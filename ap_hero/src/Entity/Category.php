@@ -6,9 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+ * @ApiResource(subresourceOperations={
+ *     "api_products_category_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Category
 {

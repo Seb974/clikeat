@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { GET_PRODUCTS, ADD_PRODUCT, DELETE_PRODUCT, PRODUCTS_LOADING, GET_PRODUCT } from './types';
+import { GET_PRODUCTS, PRODUCTS_LOADING, GET_PRODUCT } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 import productReducer from '../reducers/productReducer';
 
 export const getProducts = () => dispatch => {
+  localStorage.removeItem('products');
   let storedProducts = localStorage.getItem('products') || "";
   if (storedProducts !== "") {
     storedProducts = JSON.parse(storedProducts);
@@ -15,11 +16,11 @@ export const getProducts = () => dispatch => {
   } else {
     dispatch(setProductsLoading());
     axios
-      .get('/api_index')
+      .get('api/products')
       .then((res) => {
           dispatch({
             type: GET_PRODUCTS,
-            payload: res.data
+            payload: res.data['hydra:member']
           })
       }
       )
@@ -45,8 +46,9 @@ export const getProduct = id => dispatch => {
   } else {
     dispatch(setProductsLoading());
     axios
-      .get('/product/api/' + id)
+      .get('/api/products/' + id)
       .then((res) => {
+        console.log(res.data);
         dispatch({
           type: GET_PRODUCT,
           payload: res.data
@@ -63,3 +65,14 @@ export const setProductsLoading = () => {
     type: PRODUCTS_LOADING
   };
 };
+
+export const updateProductStock = variant => dispatch => {
+    console.log(variant);
+    dispatch({
+      type: UPDATE_PRODUCT_STOCK,
+      payload: {
+        variant: variant,
+      }
+    })
+
+}

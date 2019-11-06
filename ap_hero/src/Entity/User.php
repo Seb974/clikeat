@@ -8,10 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @ApiResource
  */
 class User implements UserInterface
 {
@@ -55,6 +58,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Pics", cascade={"persist", "remove"})
+     * @ApiSubresource
      */
     private $avatar;
 
@@ -68,12 +72,14 @@ class User implements UserInterface
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Cart", mappedBy="user", cascade={"persist", "remove"})
      * @Groups({"product", "user", "supplier", "variant"})
+     * @ApiSubresource
      */
     private $cart;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Metadata", mappedBy="user")
-     * @Groups({"product", "user", "supplier", "variant"})
+     * @Groups({"product", "user", "supplier", "variant", "metadata"})
+     * @ApiSubresource
      */
     private $metadata;
 

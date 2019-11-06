@@ -18,6 +18,7 @@ use App\Entity\Pics;
 use App\Form\EditSelfType;
 use App\Controller\UserController;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use App\Security\AppAuthenticator;
 use App\Service\Cart\CartService;
 use App\Service\Metadata\MetadataService;
@@ -29,6 +30,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class SecurityController extends AbstractController
 {
@@ -60,6 +64,21 @@ class SecurityController extends AbstractController
         $em->flush();
 
         return new Response(sprintf('User %s successfully created', $user->getUsername()));
+    }
+
+    /**
+     * @Route("/user/updated", name="refresh_token", methods={"POST"})
+     */
+    public function refreshToken(Request $request, SerializerInterface $serializer, JWTTokenManagerInterface $jwtManager, UserRepository $userRepository)
+    {
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $data = json_decode($request->getContent(), true);
+            $request->request->replace(is_array($data) ? $data : array());
+        }
+        $user = $userRepository->find($request->request->get("id"));
+        $token = $jwtManager->create($user);
+        
+        return JsonResponse::fromJsonString($serializer->serialize(['token' => $token], 'json'));
     }
 
     /*

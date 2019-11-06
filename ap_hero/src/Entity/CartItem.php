@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CartItemRepository")
+ * @ApiResource
  */
 class CartItem
 {
@@ -19,6 +22,7 @@ class CartItem
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Variant")
      * @ORM\JoinColumn(nullable=false)
+     * @ApiSubresource
      */
     private $product;
 

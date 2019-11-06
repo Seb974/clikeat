@@ -22,9 +22,9 @@ use App\Entity\Product;
 use App\Service\Serializer\SerializerService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-
-
+use Symfony\Component\Mercure\Publisher;
+use Symfony\Component\Mercure\Update;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * This controller is about homepage
@@ -63,30 +63,29 @@ class HomeController extends AbstractController
         ]);
     }
 
-
-
-
     /**
      * @Route("/api_index", name="index_api")
      */
     public function indexApi( ProductRepository $productRepository, Request $request , CartService $cartService, SerializerService $serializer)
     {
-        $user = $this->getUser();
-        if ($user) {
-            if ($user->getCart() && empty($cartService->getCart())) {
-                $cartService->generateCartSession($user->getCart());
-            }
-        }
+        // $user = $this->getUser();
+        // if ($user) {
+        //     if ($user->getCart() && empty($cartService->getCart())) {
+        //         $cartService->generateCartSession($user->getCart());
+        //     }
+        // }
 
-		$cart_items = $request->getSession()->get('cart', []);
-		$cart_count = 0;
-		foreach ( $cart_items as $id => $qty) {
-			$cart_count += $qty;
-		}
+		// $cart_items = $request->getSession()->get('cart', []);
+		// $cart_count = 0;
+		// foreach ( $cart_items as $id => $qty) {
+		// 	$cart_count += $qty;
+		// }
 
         $products = $productRepository->findAll();
         return JsonResponse::fromJsonString($serializer->serializeEntity($products, 'product'));
     }
+
+    
 
 
 }

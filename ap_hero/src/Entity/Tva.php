@@ -4,9 +4,16 @@ namespace App\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TvaRepository")
+ * @ApiResource(subresourceOperations={
+ *     "api_products_tva_get_subresource"={
+ *         "method"="GET",
+ *         "normalization_context"={"groups"={"product"}}
+ *     }
+ * })
  */
 class Tva
 {

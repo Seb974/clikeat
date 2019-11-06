@@ -38,10 +38,9 @@ class Navbar extends Component {
                         </span>
                     </Link>
                     <div className="dropdown-menu dropdown-menu-right">
-                        <a className="dropdown-item" href="{{ path('user_self_show') }}">
-                            <i className="fas fa-user"></i>Mon profil</a>
+                        <Link className="dropdown-item" to="/account">  <i className="fas fa-user"></i>Mon profil</Link>
                         <div className="dropdown-divider"></div>
-                        { (props.user.roles.indexOf('ROLE_SUPPLIER') === -1 && props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
+                        { typeof props.user === 'undefined' ? "" : (props.user.roles.indexOf('ROLE_SUPPLIER') === -1 && props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
                             <span>
                                 <a className="dropdown-item" href="{{ path('stock_index') }}">
                                     <i className="fas fa-box-open"></i>Stocks</a>
@@ -52,7 +51,7 @@ class Navbar extends Component {
                             </span>
                             )
                         }
-                        { (props.user.roles.indexOf('ROLE_DELIVERER') === -1 && props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
+                        { typeof props.user === 'undefined' ? "" : (props.user.roles.indexOf('ROLE_DELIVERER') === -1 && props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
                             <span>
                                 <a className="dropdown-item" href="{{ path('deliverer') }}">
                                     <i className="fas fa-truck"></i>Livraisons</a>
@@ -60,7 +59,7 @@ class Navbar extends Component {
                             </span>
                             )
                         }
-                        { (props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
+                        { typeof props.user === 'undefined' ? "" : (props.user.roles.indexOf('ROLE_ADMIN') === -1) ? "" : (
                             <span>
                                 <a className="dropdown-item" href="{{ path('user_index') }}">
                                     <i className="fas fa-users"></i>Users</a>
